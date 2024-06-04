@@ -1,0 +1,13 @@
+{
+  "name": "authalo",
+  "version": "1.0.0",
+  "description": "A lightweight authentication library",
+  "main": "index.js",
+  "repository": "https://github.com/OyugoObonyo/authalo.git",
+  "author": "OyugoObonyo <nyikal1999@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
