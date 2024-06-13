@@ -1,6 +1,6 @@
 export type ValidProvider = 'email';
 
-export interface UserSchema {
+export interface User {
   id: string;
   passwordHash: string;
   provider: ValidProvider;

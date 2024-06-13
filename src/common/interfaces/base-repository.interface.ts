@@ -1,0 +1,13 @@
+import {
+  GetManyOptions,
+  GetOneOptions,
+} from '@common/interfaces/get-options.interface';
+
+export interface BaseRepository<T> {
+  create(params: Partial<T>): Promise<T>;
+  getMany(options: GetManyOptions<T>): Promise<T[]>;
+  getOne(options: GetOneOptions<T>): Promise<T>;
+  update(entity: T, params: Partial<T>): Promise<T>;
+  softDelete?(entity: T): Promise<T>;
+  delete?(entity: T): Promise<void>;
+}
