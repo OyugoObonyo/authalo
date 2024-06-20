@@ -5,6 +5,6 @@ export interface GetOneOptions<T> {
   fields?: SelectOptions<T>;
 }
 
-export interface GetManyOptions<T> extends GetOneOptions<T> {
+export interface GetOptions<T> extends GetOneOptions<T> {
   limit?: number;
 }

@@ -1,9 +1,7 @@
-export type ValidProvider = 'email';
-
 export interface User {
   id: string;
   passwordHash: string;
-  provider: ValidProvider;
+  provider: string;
   isActive: boolean;
   firstName?: string;
   lastName?: string;
