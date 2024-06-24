@@ -1,14 +1,9 @@
-import { User as UserSchema } from '@users/interfaces/user.interface';
-import {
-  Entity,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  PrimaryColumn,
-} from 'typeorm';
+import { Timestamps } from '@db/embeds/timestamps.embed';
+import { User } from '@users/interfaces/user.interface';
+import { Entity, Column, PrimaryColumn, ObjectLiteral } from 'typeorm';
 
 @Entity({ name: 'users', schema: 'auth' })
-export class User implements UserSchema {
+export class UserEntity implements User {
   @PrimaryColumn()
   id: string;
 
@@ -31,7 +26,7 @@ export class User implements UserSchema {
   otherName?: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  metadata: Map<string, any>;
+  metadata: ObjectLiteral;
 
   @Column({ nullable: true })
   email: string;
@@ -45,9 +40,6 @@ export class User implements UserSchema {
   @Column({ name: 'last_login_at', type: 'timestamptz' })
   lastLoginAt: Date;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
-  updatedAt: Date;
+  @Column(() => Timestamps)
+  timestamps: Timestamps;
 }

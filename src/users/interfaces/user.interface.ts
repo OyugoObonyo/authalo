@@ -1,3 +1,5 @@
+import { ObjectLiteral } from '@common/interfaces/object-literal';
+
 export interface User {
   id: string;
   passwordHash: string;
@@ -6,7 +8,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   otherName?: string;
-  metadata?: Map<string, any>;
+  metadata?: ObjectLiteral;
   email?: string;
   emailConfirmedAt: Date;
   bannedUntil?: Date;
