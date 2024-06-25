@@ -1,6 +1,13 @@
 import { Timestamps } from '@db/embeds/timestamps.embed';
 import { User } from '@users/interfaces/user.interface';
-import { Entity, Column, PrimaryColumn, ObjectLiteral } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  ObjectLiteral,
+  OneToMany,
+} from 'typeorm';
+import { SessionEntity } from '@auth/entities/session.entity';
 
 @Entity({ name: 'users', schema: 'auth' })
 export class UserEntity implements User {
@@ -17,13 +24,13 @@ export class UserEntity implements User {
   isActive: boolean;
 
   @Column({ name: 'first_name', nullable: true })
-  firstName?: string;
+  firstName: string;
 
   @Column({ name: 'last_name', nullable: true })
-  lastName?: string;
+  lastName: string;
 
   @Column({ name: 'other_name', nullable: true })
-  otherName?: string;
+  otherName: string;
 
   @Column({ type: 'jsonb', nullable: true })
   metadata: ObjectLiteral;
@@ -34,12 +41,15 @@ export class UserEntity implements User {
   @Column({ name: 'email_confirmed_at', type: 'timestamptz', nullable: true })
   emailConfirmedAt: Date;
 
-  @Column({ name: 'banned_until', type: 'timestamptz' })
+  @Column({ name: 'banned_until', type: 'timestamptz', nullable: true })
   bannedUntil: Date;
 
-  @Column({ name: 'last_login_at', type: 'timestamptz' })
+  @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
   lastLoginAt: Date;
 
   @Column(() => Timestamps)
   timestamps: Timestamps;
+
+  @OneToMany(() => SessionEntity, (session) => session.user)
+  sessions: SessionEntity[];
 }
