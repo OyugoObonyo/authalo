@@ -1,7 +1,15 @@
 import { Timestamps } from '@db/embeds/timestamps.embed';
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { UserEntity } from '@users/entities/user.entity';
 import { Session } from '@auth/interfaces/session.interface';
+import { RefreshTokenEntity } from '@auth/entities/refresh-token.entity';
 
 @Entity({ name: 'sessions', schema: 'auth' })
 export class SessionEntity implements Session {
@@ -23,7 +31,13 @@ export class SessionEntity implements Session {
   @Column(() => Timestamps)
   timestamps: Timestamps;
 
+  @OneToOne(() => RefreshTokenEntity, (refreshToken) => refreshToken.session, {
+    cascade: ['insert', 'update', 'remove'],
+  })
+  @JoinColumn({ name: 'refresh_token_id' })
+  refreshToken: RefreshTokenEntity;
+
   @ManyToOne(() => UserEntity, (user) => user.sessions, { onDelete: 'CASCADE' })
-  @Column({ name: 'user_id' })
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 }

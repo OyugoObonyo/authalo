@@ -1,20 +1,19 @@
+import { SessionEntity } from '@auth/entities/session.entity';
+import { RefreshToken } from '@auth/interfaces/refresh-token.interface';
 import { Timestamps } from '@db/embeds/timestamps.embed';
-import { PrimaryColumn, Column, Entity } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'refresh_tokens', schema: 'auth' })
-export class RefreshTokenEntity {
+export class RefreshTokenEntity implements RefreshToken {
   @PrimaryColumn()
   id: string;
 
-  token;
-
-  isRevoked;
+  @Column({ name: 'is_revoked', default: false })
+  isRevoked: boolean;
 
   @Column(() => Timestamps)
   timestamps: Timestamps;
 
-  session;
-
-  // think
-  user;
+  @OneToOne(() => SessionEntity, (session) => session.refreshToken)
+  session: SessionEntity;
 }

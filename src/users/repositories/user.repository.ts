@@ -21,8 +21,8 @@ export class UserRepository implements BaseRepository<User> {
       const user = this.repository.create(params);
       return await this.repository.save(user);
     } catch (error) {
-      throw new DatabaseException('Database error while creating user', {
-        cause: error,
+      throw new DatabaseException('Database error while creating new user', {
+        cause: error.message,
         description: error.detail,
       });
     }
@@ -36,7 +36,7 @@ export class UserRepository implements BaseRepository<User> {
       });
     } catch (error) {
       throw new DatabaseException('Database error while getting users', {
-        cause: error,
+        cause: error.message,
         description: error.detail,
       });
     }
@@ -47,7 +47,7 @@ export class UserRepository implements BaseRepository<User> {
       return await this.repository.findOne({ select: options.fields });
     } catch (error) {
       throw new DatabaseException('Database error while getting user', {
-        cause: error,
+        cause: error.message,
         description: error.detail,
       });
     }
@@ -62,7 +62,7 @@ export class UserRepository implements BaseRepository<User> {
       return user;
     } catch (error) {
       throw new DatabaseException('Database error while getting user', {
-        cause: error,
+        cause: error.message,
         description: error.detail,
       });
     }
@@ -77,7 +77,7 @@ export class UserRepository implements BaseRepository<User> {
       return this.repository.create(params);
     } catch (error) {
       throw new DatabaseException('Database error while updating user', {
-        cause: error,
+        cause: error.message,
         description: error.detail,
       });
     }
