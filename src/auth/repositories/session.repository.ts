@@ -8,13 +8,13 @@ import { Repository } from 'typeorm';
 export class SessionRepository implements BaseRepository<Session> {
   constructor(
     @InjectRepository(SessionEntity)
-    private readonly repository: Repository<SessionEntity>,
+    private readonly repo: Repository<SessionEntity>,
   ) {}
 
   async create(params: Partial<Session>): Promise<Session> {
     try {
-      const session = this.repository.create(params);
-      return await this.repository.save(session);
+      const session = this.repo.create(params);
+      return await this.repo.save(session);
     } catch (error) {
       throw new DatabaseException('Database error while creating new session', {
         cause: error.message,

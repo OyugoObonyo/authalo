@@ -13,13 +13,13 @@ import { NotFoundException } from '@nestjs/common';
 export class UserRepository implements BaseRepository<User> {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly repository: Repository<UserEntity>,
+    private readonly repo: Repository<UserEntity>,
   ) {}
 
   async create(params: Partial<UserEntity>): Promise<UserEntity> {
     try {
-      const user = this.repository.create(params);
-      return await this.repository.save(user);
+      const user = this.repo.create(params);
+      return await this.repo.save(user);
     } catch (error) {
       throw new DatabaseException('Database error while creating new user', {
         cause: error.message,
@@ -30,7 +30,7 @@ export class UserRepository implements BaseRepository<User> {
 
   async get(options?: GetOptions<UserEntity>): Promise<UserEntity[]> {
     try {
-      return await this.repository.find({
+      return await this.repo.find({
         select: options.fields,
         take: options.limit,
       });
@@ -44,7 +44,7 @@ export class UserRepository implements BaseRepository<User> {
 
   async getOne(options?: GetOneOptions<UserEntity>): Promise<UserEntity> {
     try {
-      return await this.repository.findOne({ select: options.fields });
+      return await this.repo.findOne({ select: options.fields });
     } catch (error) {
       throw new DatabaseException('Database error while getting user', {
         cause: error.message,
@@ -73,8 +73,8 @@ export class UserRepository implements BaseRepository<User> {
     params: Partial<UserEntity>,
   ): Promise<Partial<UserEntity>> {
     try {
-      await this.repository.update(entityId, params);
-      return this.repository.create(params);
+      await this.repo.update(entityId, params);
+      return this.repo.create(params);
     } catch (error) {
       throw new DatabaseException('Database error while updating user', {
         cause: error.message,
