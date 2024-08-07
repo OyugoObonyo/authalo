@@ -1,6 +1,6 @@
 import { SessionEntity } from '@auth/entities/session.entity';
 import { RefreshToken } from '@auth/interfaces/refresh-token.interface';
-import { Timestamps } from '@db/embeds/timestamps.embed';
+import { Timestamps } from 'database/embeds/timestamps.embed';
 import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'refresh_tokens', schema: 'auth' })

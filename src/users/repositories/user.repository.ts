@@ -5,7 +5,7 @@ import {
 } from '@common/interfaces/get-options.interface';
 import { UserEntity } from '@users/entities/user.entity';
 import { User } from '@users/interfaces/user.interface';
-import { DatabaseException } from '@db/exceptions/database.exception';
+import { DatabaseException } from 'database/exceptions/database.exception';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';

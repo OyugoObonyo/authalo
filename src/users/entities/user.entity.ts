@@ -1,4 +1,4 @@
-import { Timestamps } from '@db/embeds/timestamps.embed';
+import { Timestamps } from 'database/embeds/timestamps.embed';
 import { User } from '@users/interfaces/user.interface';
 import {
   Entity,

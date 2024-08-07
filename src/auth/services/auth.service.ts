@@ -1,6 +1,8 @@
-import { SessionRepository } from '@auth/repositories/session.repository';
+import { SessionRepository } from '@src/auth/repositories/postgresql/session.repository';
+import { Injectable } from '@nestjs/common';
 import { UserRepository } from '@users/repositories/user.repository';
 
+@Injectable()
 export class AuthService {
   constructor(
     private readonly sessionRepo: SessionRepository,

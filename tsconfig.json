@@ -18,10 +18,12 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@src/*": ["src/*"],
       "@common/*": ["src/common/*"],
       "@users/*": ["src/users/*"],
-      "@db/*": ["src/database/*"],
+      "@db/*": ["database/*"],
       "@auth/*": ["src/auth/*"],
+      "@configs/*": ["configs/*"],
     }
   }
 }

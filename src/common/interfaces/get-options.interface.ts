@@ -5,5 +5,5 @@ export interface GetOptions<T> extends GetOneOptions<T> {
 }
 
 export interface GetOneOptions<T> {
-  fields?: FindOptionsSelect<T>;
+  selectedfields?: FindOptionsSelect<T>;
 }

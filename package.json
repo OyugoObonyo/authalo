@@ -70,10 +70,12 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
+      "^@src/(.*)$": "<rootDir>/../src/$1",
       "^@common/(.*)$": "<rootDir>/../src/common/$1",
       "^@users/(.*)$": "<rootDir>/../src/users/$1",
       "^@db/(.*)$": "<rootDir>/../src/database/$1",
-      "^@auth/(.*)$": "<rootDir>/../src/auth/$1"
+      "^@auth/(.*)$": "<rootDir>/../src/auth/$1",
+      "^@configs/(.*)$": "<rootDir>/../configs/$1"
     }
   }
 }
