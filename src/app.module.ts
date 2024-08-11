@@ -7,14 +7,16 @@ import { UsersModule } from '@users/users.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true, load: [appConfigsLoader] }),
     // TODO: make db credentials dynamic such that the connection depends on the db system
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
+        database: config.get<string>('db.postgresql.name'),
         host: config.get<string>('db.postgresql.host'),
         port: config.get<number>('db.postgresql.port'),
-        username: config.get<string>('db.postgresql.name'),
+        username: config.get<string>('db.postgresql.user'),
         password: config.get<string>('db.postgresql.password'),
         autoLoadEntities: true,
         migrations: ['database/migrations/*.{ts}'],
@@ -26,7 +28,6 @@ import { UsersModule } from '@users/users.module';
     }),
     UsersModule,
     AuthModule,
-    ConfigModule.forRoot({ load: [appConfigsLoader] }),
   ],
 })
 export class AppModule {}
