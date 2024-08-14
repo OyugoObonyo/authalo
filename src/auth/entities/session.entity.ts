@@ -32,7 +32,7 @@ export class SessionEntity implements Session {
   timestamps: Timestamps;
 
   @OneToOne(() => RefreshTokenEntity, (refreshToken) => refreshToken.session, {
-    cascade: ['insert', 'update', 'remove'],
+    onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'refresh_token_id' })
   refreshToken: RefreshTokenEntity;

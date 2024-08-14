@@ -19,11 +19,12 @@ import { UsersModule } from '@users/users.module';
         username: config.get<string>('db.postgresql.user'),
         password: config.get<string>('db.postgresql.password'),
         autoLoadEntities: true,
-        migrations: ['database/migrations/*.{ts}'],
+        migrations: ['dist/database/migrations/postgresql/*.js'],
         maxQueryExecutionTime: 1000,
         logging: ['error', 'info'],
         // TODO: implement custom logger that attaches actor id and timestamp
         logger: 'advanced-console',
+        migrationsRun: true,
       }),
     }),
     UsersModule,
