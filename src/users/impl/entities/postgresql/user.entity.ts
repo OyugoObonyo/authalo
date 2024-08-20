@@ -9,12 +9,12 @@ import {
 } from 'typeorm';
 import { SessionEntity } from '@auth/entities/session.entity';
 
-@Entity({ name: 'users', schema: 'auth' })
+@Entity({ name: 'users' })
 export class UserEntity implements User {
   @PrimaryColumn()
   id: string;
 
-  @Column({ name: 'password_hash', type: 'bytea' })
+  @Column({ name: 'password_hash' })
   passwordHash: string;
 
   @Column()

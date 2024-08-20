@@ -7,11 +7,11 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { UserEntity } from '@users/entities/user.entity';
+import { UserEntity } from '@users/impl/entities/postgresql/user.entity';
 import { Session } from '@auth/interfaces/session.interface';
 import { RefreshTokenEntity } from '@auth/entities/refresh-token.entity';
 
-@Entity({ name: 'sessions', schema: 'auth' })
+@Entity({ name: 'sessions' })
 export class SessionEntity implements Session {
   @PrimaryColumn()
   id: string;

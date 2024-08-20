@@ -3,7 +3,7 @@ import { RefreshToken } from '@auth/interfaces/refresh-token.interface';
 import { Timestamps } from 'database/embeds/timestamps.embed';
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 
-@Entity({ name: 'refresh_tokens', schema: 'auth' })
+@Entity({ name: 'refresh_tokens' })
 export class RefreshTokenEntity implements RefreshToken {
   @PrimaryColumn()
   id: string;

@@ -21,11 +21,15 @@
     "migrations:create": "typeorm migration:create"
   },
   "dependencies": {
+    "@apollo/server": "^4.11.0",
+    "@nestjs/apollo": "^12.2.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.0",
+    "@nestjs/graphql": "^12.2.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.2",
+    "graphql": "^16.9.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0",
     "reflect-metadata": "^0.2.0",

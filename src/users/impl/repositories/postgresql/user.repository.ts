@@ -3,7 +3,7 @@ import {
   GetOneOptions,
   GetOptions,
 } from '@common/interfaces/get-options.interface';
-import { UserEntity } from '@users/entities/user.entity';
+import { UserEntity } from '@users/impl/entities/postgresql/user.entity';
 import { User } from '@users/interfaces/user.interface';
 import { DatabaseException } from 'database/exceptions/database.exception';
 import { InjectRepository } from '@nestjs/typeorm';
