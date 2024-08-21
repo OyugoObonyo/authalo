@@ -1,19 +1,14 @@
-import { ObjectLiteral } from '@common/interfaces/object-literal';
+import { Query, Resolver } from '@nestjs/graphql';
+import { UserModel } from '@users/impl/models/user.model';
 import { User } from '@users/interfaces/user.interface';
+import { UserService } from '@users/services/user.service';
 
-export class UserResolver implements User {
-  id: string;
-  passwordHash: string;
-  provider: string;
-  isActive: boolean;
-  firstName: string;
-  lastName: string;
-  otherName: string;
-  metadata: ObjectLiteral;
-  email: string;
-  emailConfirmedAt: Date;
-  bannedUntil: Date;
-  lastLoginAt: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
+@Resolver(() => UserModel)
+export class UsersResolver {
+  constructor(private readonly userService: UserService) {}
+
+  @Query(() => [UserModel], { name: 'users' })
+  async getUsers(): Promise<User[]> {
+    return await this.userService.get();
+  }
 }

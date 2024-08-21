@@ -7,8 +7,9 @@ import {
   ObjectLiteral,
   OneToMany,
 } from 'typeorm';
-import { SessionEntity } from '@auth/entities/session.entity';
+import { SessionEntity } from '@authentication/entities/session.entity';
 
+// TODO: Make entity spec 1-to-1 with migrations definition
 @Entity({ name: 'users' })
 export class UserEntity implements User {
   @PrimaryColumn()

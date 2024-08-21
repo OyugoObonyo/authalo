@@ -1,5 +1,5 @@
-import { SessionEntity } from '@auth/entities/session.entity';
-import { RefreshToken } from '@auth/interfaces/refresh-token.interface';
+import { SessionEntity } from '@authentication/entities/session.entity';
+import { RefreshToken } from '@authentication/interfaces/refresh-token.interface';
 import { Timestamps } from 'database/embeds/timestamps.embed';
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 

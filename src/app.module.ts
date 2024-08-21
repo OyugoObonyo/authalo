@@ -1,4 +1,4 @@
-import { AuthModule } from '@auth/auth.module';
+import { AuthModule } from '@authentication/auth.module';
 import { appConfigsLoader } from '@configs/app.configs';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';

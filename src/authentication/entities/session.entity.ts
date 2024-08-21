@@ -8,8 +8,8 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 import { UserEntity } from '@users/impl/entities/postgresql/user.entity';
-import { Session } from '@auth/interfaces/session.interface';
-import { RefreshTokenEntity } from '@auth/entities/refresh-token.entity';
+import { Session } from '@authentication/interfaces/session.interface';
+import { RefreshTokenEntity } from '@authentication/entities/refresh-token.entity';
 
 @Entity({ name: 'sessions' })
 export class SessionEntity implements Session {

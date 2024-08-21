@@ -1,0 +1,48 @@
+import { ObjectLiteral } from '@common/interfaces/object-literal';
+import { User } from '@users/interfaces/user.interface';
+import { ObjectType, Field } from '@nestjs/graphql';
+
+@ObjectType()
+export class UserModel implements User {
+  @Field()
+  id: string;
+
+  @Field()
+  passwordHash: string;
+
+  @Field()
+  provider: string;
+
+  @Field()
+  isActive: boolean;
+
+  @Field()
+  firstName: string;
+
+  @Field()
+  lastName: string;
+
+  @Field()
+  otherName: string;
+
+  @Field()
+  metadata: ObjectLiteral;
+
+  @Field()
+  email: string;
+
+  @Field()
+  emailConfirmedAt: Date;
+
+  @Field()
+  bannedUntil: Date;
+
+  @Field()
+  lastLoginAt: Date;
+
+  @Field()
+  createdAt?: Date;
+
+  @Field()
+  updatedAt?: Date;
+}

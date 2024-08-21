@@ -1,7 +1,7 @@
-import { RefreshTokenEntity } from '@auth/entities/refresh-token.entity';
-import { SessionEntity } from '@auth/entities/session.entity';
-import { SessionRepository } from '@auth/repositories/postgresql/session.repository';
-import { SESSION_REPOSITORY_TOKEN } from '@auth/repositories/repository.tokens';
+import { RefreshTokenEntity } from '@authentication/entities/refresh-token.entity';
+import { SessionEntity } from '@authentication/entities/session.entity';
+import { SessionRepository } from '@authentication/repositories/postgresql/session.repository';
+import { SESSION_REPOSITORY_TOKEN } from '@authentication/repositories/repository.tokens';
 import { provideRepository } from '@common/providers';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';

@@ -1,5 +1,5 @@
-import { SESSION_REPOSITORY_TOKEN } from '@auth/repositories/repository.tokens';
-import { Session } from '@auth/interfaces/session.interface';
+import { SESSION_REPOSITORY_TOKEN } from '@authentication/repositories/repository.tokens';
+import { Session } from '@authentication/interfaces/session.interface';
 import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { Inject } from '@nestjs/common';
 

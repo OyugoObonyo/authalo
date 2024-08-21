@@ -22,7 +22,7 @@
       "@common/*": ["src/common/*"],
       "@users/*": ["src/users/*"],
       "@db/*": ["database/*"],
-      "@auth/*": ["src/auth/*"],
+      "@authentication/*": ["src/authentication/*"],
       "@configs/*": ["configs/*"],
     }
   }

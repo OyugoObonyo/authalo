@@ -1,4 +1,4 @@
-import { Session } from '@auth/interfaces/session.interface';
+import { Session } from '@authentication/interfaces/session.interface';
 
 export interface RefreshToken {
   id: string;
