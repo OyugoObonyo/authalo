@@ -1,10 +1,10 @@
 import { ObjectLiteral } from '@common/interfaces/object-literal';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { User } from '@users/interfaces/user.interface';
-import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
 export class UserModel implements User {
-  @Field()
+  @Field(() => ID)
   id: string;
 
   @Field()
@@ -41,8 +41,8 @@ export class UserModel implements User {
   lastLoginAt: Date;
 
   @Field()
-  createdAt?: Date;
+  createdAt: Date;
 
   @Field()
-  updatedAt?: Date;
+  updatedAt: Date;
 }

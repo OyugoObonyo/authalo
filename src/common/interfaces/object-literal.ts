@@ -1,3 +1,3 @@
 export interface ObjectLiteral {
-  [key: string]: unknown;
+  [key: string]: any;
 }
