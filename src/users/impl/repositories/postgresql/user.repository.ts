@@ -1,8 +1,5 @@
 import { BaseRepository } from '@common/interfaces/base-repository.interface';
-import {
-  GetOneOptions,
-  GetOptions,
-} from '@common/interfaces/get-options.interface';
+import { GetOneOptions } from '@common/interfaces/get-options.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '@users/impl/entities/postgresql/user.entity';
 import { User } from '@users/interfaces/user.interface';
@@ -27,12 +24,9 @@ export class UserRepository implements BaseRepository<User> {
     }
   }
 
-  async get(options?: GetOptions<UserEntity>): Promise<UserEntity[]> {
+  async get(): Promise<UserEntity[]> {
     try {
-      return await this.repo.find({
-        select: options.fields,
-        take: options.limit,
-      });
+      return await this.repo.find();
     } catch (error) {
       throw new DatabaseException('Database error while getting users', {
         cause: error.message,

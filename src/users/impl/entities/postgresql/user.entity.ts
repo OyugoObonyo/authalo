@@ -48,7 +48,7 @@ export class UserEntity implements User {
   @Column({ name: 'last_login_at', type: 'timestamptz', nullable: true })
   lastLoginAt: Date;
 
-  @Column(() => Timestamps)
+  @Column(() => Timestamps, { prefix: '' })
   timestamps: Timestamps;
 
   @OneToMany(() => SessionEntity, (session) => session.user)

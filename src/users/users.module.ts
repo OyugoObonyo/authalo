@@ -6,6 +6,7 @@ import { USER_REPOSITORY_TOKEN } from '@users/user.constants';
 import { UserRepository } from '@users/impl/repositories/postgresql/user.repository';
 import { UsersResolver } from '@users/api/graphql/user.resolver';
 import { UserService } from '@users/services/user.service';
+import { StringKeyJsonScalar } from '@common/graphql/scalars/string-key-json.scalar';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
@@ -13,6 +14,7 @@ import { UserService } from '@users/services/user.service';
     ...provideRepository(UserEntity, USER_REPOSITORY_TOKEN, UserRepository),
     UserService,
     UsersResolver,
+    StringKeyJsonScalar,
   ],
 })
 export class UsersModule {}

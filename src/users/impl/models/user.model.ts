@@ -1,5 +1,6 @@
 import { ObjectLiteral } from '@common/interfaces/object-literal';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { StringKeyJsonScalar } from '@common/graphql/scalars/string-key-json.scalar';
 import { User } from '@users/interfaces/user.interface';
 
 @ObjectType()
@@ -25,7 +26,7 @@ export class UserModel implements User {
   @Field()
   otherName: string;
 
-  @Field()
+  @Field(() => StringKeyJsonScalar)
   metadata: ObjectLiteral;
 
   @Field()
