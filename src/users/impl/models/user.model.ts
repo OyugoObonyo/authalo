@@ -2,6 +2,7 @@ import { ObjectLiteral } from '@common/interfaces/object-literal';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { StringKeyJsonScalar } from '@common/graphql/scalars/string-key-json.scalar';
 import { User } from '@users/interfaces/user.interface';
+import { Timestamps } from '@db/embeds/timestamps.embed';
 
 @ObjectType()
 export class UserModel implements User {
@@ -9,41 +10,38 @@ export class UserModel implements User {
   id: string;
 
   @Field()
-  passwordHash: string;
-
-  @Field()
   provider: string;
 
   @Field()
   isActive: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   firstName: string;
 
-  @Field()
+  @Field({ nullable: true })
   lastName: string;
 
-  @Field()
+  @Field({ nullable: true })
   otherName: string;
 
-  @Field(() => StringKeyJsonScalar)
+  @Field(() => StringKeyJsonScalar, { nullable: true })
   metadata: ObjectLiteral;
 
-  @Field()
+  @Field({ nullable: true })
   email: string;
 
-  @Field()
+  @Field({ nullable: true })
   emailConfirmedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   bannedUntil: Date;
 
-  @Field()
+  @Field({ nullable: true })
   lastLoginAt: Date;
 
-  @Field()
-  createdAt: Date;
+  @Field({ nullable: true })
+  createdAt?: Date;
 
-  @Field()
-  updatedAt: Date;
+  @Field({ nullable: true })
+  updatedAt?: Date;
 }

@@ -4,19 +4,18 @@
 
 type UserModel {
   id: ID!
-  passwordHash: String!
   provider: String!
   isActive: Boolean!
-  firstName: String!
-  lastName: String!
-  otherName: String!
-  metadata: StringKeyJson!
-  email: String!
-  emailConfirmedAt: DateTime!
-  bannedUntil: DateTime!
-  lastLoginAt: DateTime!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  firstName: String
+  lastName: String
+  otherName: String
+  metadata: StringKeyJson
+  email: String
+  emailConfirmedAt: DateTime
+  bannedUntil: DateTime
+  lastLoginAt: DateTime
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 """

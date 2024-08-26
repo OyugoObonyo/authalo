@@ -1,6 +1,6 @@
 import { SessionRepository } from '@authentication/repositories/postgresql/session.repository';
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '@src/users/impl/repositories/postgresql/user.repository';
+import { UserRepository } from '@users/impl/repositories/postgresql/user.repository';
 
 @Injectable()
 export class AuthService {

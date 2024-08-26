@@ -4,6 +4,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
+// TODO: specify common POSTGRESQL error codes and return error messages mirroring common error codes
 export class DatabaseException extends HttpException {
   constructor(
     message: string,

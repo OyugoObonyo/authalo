@@ -15,14 +15,14 @@ export class UserEntity implements User {
   @PrimaryColumn()
   id: string;
 
-  @Column({ name: 'password_hash' })
-  passwordHash: string;
-
   @Column()
   provider: string;
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
+
+  @Column({ name: 'password_hash', nullable: true })
+  passwordHash: string;
 
   @Column({ name: 'first_name', nullable: true })
   firstName: string;

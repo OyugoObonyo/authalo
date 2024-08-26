@@ -2,7 +2,6 @@ import { ObjectLiteral } from '@common/interfaces/object-literal';
 
 export interface User {
   id: string;
-  passwordHash: string;
   provider: string;
   isActive: boolean;
   firstName: string;
@@ -13,6 +12,7 @@ export interface User {
   emailConfirmedAt: Date;
   bannedUntil: Date;
   lastLoginAt: Date;
+  passwordHash?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
