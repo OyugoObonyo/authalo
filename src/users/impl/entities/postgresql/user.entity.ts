@@ -7,7 +7,7 @@ import {
   ObjectLiteral,
   OneToMany,
 } from 'typeorm';
-import { SessionEntity } from '@authentication/entities/session.entity';
+import { SessionEntity } from '@src/authentication/impl/entities/postgresql/session.entity';
 
 // TODO: Make entity spec 1-to-1 with migrations definition
 @Entity({ name: 'users' })

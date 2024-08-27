@@ -10,6 +10,7 @@ import { StringKeyJsonScalar } from '@common/graphql/scalars/string-key-json.sca
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
+  exports: [UserService],
   providers: [
     ...provideRepository(UserEntity, USER_REPOSITORY_TOKEN, UserRepository),
     UserService,

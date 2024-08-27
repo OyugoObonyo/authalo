@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { UserEntity } from '@users/impl/entities/postgresql/user.entity';
 import { Session } from '@authentication/interfaces/session.interface';
-import { RefreshTokenEntity } from '@authentication/entities/refresh-token.entity';
+import { RefreshTokenEntity } from '@src/authentication/impl/entities/postgresql/refresh-token.entity';
 
 @Entity({ name: 'sessions' })
 export class SessionEntity implements Session {

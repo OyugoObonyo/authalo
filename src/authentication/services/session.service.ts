@@ -1,4 +1,4 @@
-import { SESSION_REPOSITORY_TOKEN } from '@authentication/repositories/repository.tokens';
+import { SESSION_REPOSITORY_TOKEN } from '@src/authentication/impl/repositories/repository.tokens';
 import { Session } from '@authentication/interfaces/session.interface';
 import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { Inject } from '@nestjs/common';
@@ -13,4 +13,8 @@ export class SessionService {
   async getById(id: string): Promise<Session> {
     return await this.sessionRepo.getById(id);
   }
+
+  refreshSession(): void {}
+
+  revokeSession(): void {}
 }

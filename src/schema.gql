@@ -4,12 +4,12 @@
 
 type UserModel {
   id: ID!
+  metadata: StringKeyJson
   provider: String!
   isActive: Boolean!
   firstName: String
   lastName: String
   otherName: String
-  metadata: StringKeyJson
   email: String
   emailConfirmedAt: DateTime
   bannedUntil: DateTime
