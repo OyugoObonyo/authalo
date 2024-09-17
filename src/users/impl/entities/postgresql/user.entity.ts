@@ -21,7 +21,7 @@ export class UserEntity implements User {
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @Column({ name: 'password_hash', nullable: true })
+  @Column({ name: 'password_hash', nullable: true, select: false })
   passwordHash: string;
 
   @Column({ name: 'first_name', nullable: true })

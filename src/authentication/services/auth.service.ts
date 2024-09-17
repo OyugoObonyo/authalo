@@ -1,15 +1,23 @@
-import { SessionRepository } from '@src/authentication/impl/repositories/postgresql/session.repository';
+import { HashingService } from '@authentication/interfaces/hashing-service.interface';
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '@users/impl/repositories/postgresql/user.repository';
+import { CreateUserWithEmailAndPassword } from '@users/interfaces/dtos/create-user-dtos.interface';
+import { User } from '@users/interfaces/user.interface';
+import { UserService } from '@users/services/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly sessionRepo: SessionRepository,
-    private readonly userRepo: UserRepository,
+    private readonly userService: UserService,
+    private readonly hashingService: HashingService,
   ) {}
 
-  signUpWithEmailAndPassword(): void {}
+  async signUpWithEmailAndPassword({
+    password,
+    ...rest
+  }: CreateUserWithEmailAndPassword): Promise<User> {
+    const passwordHash = await this.hashingService.hash(password);
+    return this.userService.create({ ...rest, passwordHash });
+  }
 
   loginWithEmailAndPassword(credentials: string): string {
     // introspect context for user email

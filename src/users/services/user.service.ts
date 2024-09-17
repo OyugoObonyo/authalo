@@ -11,10 +11,10 @@ export class UserService {
   ) {}
 
   async create(params: Partial<User>): Promise<User> {
-    return await this.userRepo.create(params);
+    return this.userRepo.create(params);
   }
 
   async get(): Promise<User[]> {
-    return await this.userRepo.get();
+    return this.userRepo.get();
   }
 }
