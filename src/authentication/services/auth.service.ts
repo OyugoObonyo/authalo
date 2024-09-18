@@ -1,8 +1,9 @@
 import { HashingService } from '@authentication/interfaces/hashing-service.interface';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateUserWithEmailAndPassword } from '@users/interfaces/dtos/create-user-dtos.interface';
 import { User } from '@users/interfaces/user.interface';
 import { UserService } from '@users/services/user.service';
+import { SignInUserWithEmailAndPassword } from '@authentication/interfaces/dtos/signin-user-dtos.interface';
 
 @Injectable()
 export class AuthService {
@@ -19,13 +20,15 @@ export class AuthService {
     return this.userService.create({ ...rest, passwordHash });
   }
 
-  loginWithEmailAndPassword(credentials: string): string {
-    // introspect context for user email
-    // get user email and password hash
-    // check if password hash matches provided password
-    // no match? throw invalid login credentials error
-    // matches? create refresh_token, create session
-    return credentials;
+  async SignInWithEmailAndPassword(
+    credentials: SignInUserWithEmailAndPassword,
+  ): Promise<User> {
+    const { email, password } = credentials;
+    const user = await this.userService.getOneBy<'email'>({ email });
+    if (!user || !this.hashingService.compare(password, user.passwordHash)) {
+      throw new ForbiddenException('Invalid sign-in credentials');
+    }
+    return user;
   }
 
   logOut(): void {}

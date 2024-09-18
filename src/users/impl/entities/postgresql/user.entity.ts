@@ -10,6 +10,8 @@ import {
 import { SessionEntity } from '@src/authentication/impl/entities/postgresql/session.entity';
 
 // TODO: Make entity spec 1-to-1 with migrations definition
+// TODO: Fields to make unique?
+// TODO: Settle on fields to index?
 @Entity({ name: 'users' })
 export class UserEntity implements User {
   @PrimaryColumn()

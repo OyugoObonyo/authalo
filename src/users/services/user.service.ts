@@ -17,4 +17,16 @@ export class UserService {
   async get(): Promise<User[]> {
     return this.userRepo.get();
   }
+
+  async getBy<K extends keyof User>(arg: { [P in K]: User[P] }): Promise<
+    User[]
+  > {
+    return this.userRepo.getBy<K>(arg);
+  }
+
+  async getOneBy<K extends keyof User>(arg: {
+    [P in K]: User[P];
+  }): Promise<User | null> {
+    return this.userRepo.getOneBy<K>(arg);
+  }
 }
