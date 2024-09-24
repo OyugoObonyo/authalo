@@ -1,5 +1,5 @@
 import { Query, Resolver } from '@nestjs/graphql';
-import { UserModel } from '@src/users/api/graphql/models/user.model';
+import { UserModel } from '@users/api/graphql/models/user.model';
 import { User } from '@users/interfaces/user.interface';
 import { UserService } from '@users/services/user.service';
 

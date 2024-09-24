@@ -1,5 +1,6 @@
 import { ObjectLiteral } from '@common/interfaces/object-literal';
 
+//  TODO: Split DB conigs from app configs
 export function appConfigsLoader(): ObjectLiteral {
   return {
     db: {

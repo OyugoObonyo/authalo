@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { BaseRepository } from '@src/common/interfaces/base-repository.interface';
+import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { USER_REPOSITORY_TOKEN } from '@users/user.constants';
 import { User } from '@users/interfaces/user.interface';
 

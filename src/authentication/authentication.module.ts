@@ -6,13 +6,19 @@ import { provideRepository } from '@common/providers';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BcryptHashingService } from '@authentication/impl/hashing/bcrypt.hashing.service';
-import { HASHING_SERVICE_TOKEN } from '@authentication/auth.constants';
+import { HASHING_SERVICE_TOKEN } from '@authentication/authentication.constants';
 import { UsersModule } from '@users/users.module';
+import { JwtModule } from '@nestjs/jwt';
+import jwtConfig from '@configs/jwt.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([SessionEntity, RefreshTokenEntity]),
     UsersModule,
+    // TODO: investigate asProvider?
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+    ConfigModule.forFeature(jwtConfig),
   ],
   providers: [
     ...provideRepository(
@@ -26,4 +32,4 @@ import { UsersModule } from '@users/users.module';
     },
   ],
 })
-export class AuthModule {}
+export class AuthenticationModule {}

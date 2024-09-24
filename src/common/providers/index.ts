@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseRepository } from '@src/common/interfaces/base-repository.interface';
+import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { Repository } from 'typeorm';
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { SessionEntity } from '@src/authentication/impl/entities/postgresql/session.entity';
+import { SessionEntity } from '@authentication/impl/entities/postgresql/session.entity';
 import { RefreshToken } from '@authentication/interfaces/refresh-token.interface';
 import { Timestamps } from 'database/embeds/timestamps.embed';
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';

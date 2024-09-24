@@ -1,4 +1,4 @@
-import { AuthModule } from '@authentication/auth.module';
+import { AuthenticationModule } from '@authentication/authentication.module';
 import { appConfigsLoader } from '@configs/app.configs';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
@@ -31,7 +31,7 @@ import { join } from 'path';
       }),
     }),
     UsersModule,
-    AuthModule,
+    AuthenticationModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
