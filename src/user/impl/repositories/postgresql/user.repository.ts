@@ -1,7 +1,7 @@
 import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { GetOneOptions } from '@common/interfaces/get-options.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from '@users/impl/entities/postgresql/user.entity';
+import { UserEntity } from '@user/impl/entities/postgresql/user.entity';
 import { DatabaseException } from 'database/exceptions/database.exception';
 import { Repository } from 'typeorm';
 

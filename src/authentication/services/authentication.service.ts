@@ -1,8 +1,8 @@
 import { HashingService } from '@authentication/interfaces/hashing-service.interface';
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CreateUserWithEmailAndPassword } from '@users/interfaces/dtos/create-user-dtos.interface';
-import { User } from '@users/interfaces/user.interface';
-import { UserService } from '@users/services/user.service';
+import { CreateUserWithEmailAndPassword } from '@user/interfaces/dtos/create-user-dtos.interface';
+import { User } from '@user/interfaces/user.interface';
+import { UserService } from '@user/services/user.service';
 import { SignInUserWithEmailAndPassword } from '@authentication/interfaces/dtos/signin-user-dtos.interface';
 
 @Injectable()

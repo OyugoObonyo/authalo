@@ -1,5 +1,5 @@
 import { Timestamps } from 'database/embeds/timestamps.embed';
-import { User } from '@users/interfaces/user.interface';
+import { User } from '@user/interfaces/user.interface';
 import {
   Entity,
   Column,

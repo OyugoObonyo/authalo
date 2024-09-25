@@ -85,7 +85,7 @@
     "moduleNameMapper": {
       "^@src/(.*)$": "<rootDir>/../src/$1",
       "^@common/(.*)$": "<rootDir>/../src/common/$1",
-      "^@users/(.*)$": "<rootDir>/../src/users/$1",
+      "^@user/(.*)$": "<rootDir>/../src/user/$1",
       "^@db/(.*)$": "<rootDir>/../src/database/$1",
       "^@authentication/(.*)$": "<rootDir>/../src/authentication/$1",
       "^@configs/(.*)$": "<rootDir>/../configs/$1"

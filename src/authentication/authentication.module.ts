@@ -7,7 +7,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BcryptHashingService } from '@authentication/impl/hashing/bcrypt.hashing.service';
 import { HASHING_SERVICE_TOKEN } from '@authentication/authentication.constants';
-import { UsersModule } from '@users/users.module';
+import { UsersModule } from '@user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from '@configs/jwt.config';
 import { ConfigModule } from '@nestjs/config';

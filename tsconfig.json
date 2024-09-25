@@ -20,7 +20,7 @@
     "paths": {
       "@src/*": ["src/*"],
       "@common/*": ["src/common/*"],
-      "@users/*": ["src/users/*"],
+      "@user/*": ["src/user/*"],
       "@db/*": ["database/*"],
       "@authentication/*": ["src/authentication/*"],
       "@configs/*": ["configs/*"],

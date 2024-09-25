@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { CreateUserWithEmailAndPassword } from '@users/interfaces/dtos/create-user-dtos.interface';
-import { MINIMUM_USER_PASSWORD_LENGTH } from '@users/user.constants';
+import { CreateUserWithEmailAndPassword } from '@user/interfaces/dtos/create-user-dtos.interface';
+import { MINIMUM_USER_PASSWORD_LENGTH } from '@user/user.constants';
 
 export class CreateUserWithEmailAndPasswordDto
   implements CreateUserWithEmailAndPassword

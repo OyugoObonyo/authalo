@@ -5,7 +5,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from '@users/users.module';
+import { UsersModule } from '@user/user.module';
 import { join } from 'path';
 
 @Module({

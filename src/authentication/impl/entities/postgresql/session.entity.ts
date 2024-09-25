@@ -7,7 +7,7 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { UserEntity } from '@users/impl/entities/postgresql/user.entity';
+import { UserEntity } from '@user/impl/entities/postgresql/user.entity';
 import { Session } from '@authentication/interfaces/session.interface';
 import { RefreshTokenEntity } from '@authentication/impl/entities/postgresql/refresh-token.entity';
 
