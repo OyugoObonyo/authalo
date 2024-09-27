@@ -5,8 +5,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from '@user/user.module';
+import { UserModule } from '@user/user.module';
 import { join } from 'path';
+import { JobModule } from './job/job.module';
 
 @Module({
   imports: [
@@ -30,12 +31,13 @@ import { join } from 'path';
         migrationsRun: true,
       }),
     }),
-    UsersModule,
+    UserModule,
     AuthenticationModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
+    JobModule,
   ],
 })
 export class AppModule {}

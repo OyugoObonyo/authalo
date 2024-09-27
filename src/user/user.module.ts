@@ -18,4 +18,4 @@ import { StringKeyJsonScalar } from '@common/graphql/scalars/string-key-json.sca
     StringKeyJsonScalar,
   ],
 })
-export class UsersModule {}
+export class UserModule {}
