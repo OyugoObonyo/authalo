@@ -4,10 +4,13 @@ import { CreateUserWithEmailAndPassword } from '@user/interfaces/dtos/create-use
 import { User } from '@user/interfaces/user.interface';
 import { UserService } from '@user/services/user.service';
 import { SignInUserWithEmailAndPassword } from '@authentication/interfaces/dtos/signin-user-dtos.interface';
+import { JobService } from '@src/job/job.service';
+import { Job } from '@src/job/interfaces/job.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly jobService: JobService,
     private readonly userService: UserService,
     private readonly hashingService: HashingService,
   ) {}
@@ -29,6 +32,17 @@ export class AuthService {
       throw new ForbiddenException('Invalid sign-in credentials');
     }
     return user;
+  }
+
+  async testQueueing(): Promise<Job> {
+    // TODO: rename job to Task maybe?
+    const job: Job = {
+      className: 'userService',
+      method: 'testedQueue',
+      args: ['Hello Queue!!'],
+    };
+    await this.jobService.enqueue('test-queue', job);
+    return job;
   }
 
   logOut(): void {}

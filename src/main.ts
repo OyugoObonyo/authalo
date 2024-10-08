@@ -6,6 +6,7 @@ import { AppModule } from '@src/app.module';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+  app.enableShutdownHooks();
   await app.listen(process.env.PORT);
 }
 bootstrap();

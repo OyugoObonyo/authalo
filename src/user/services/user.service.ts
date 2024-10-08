@@ -29,4 +29,9 @@ export class UserService {
   }): Promise<User | null> {
     return this.userRepo.getOneBy<K>(arg);
   }
+
+  testedQueue(message: string): string {
+    console.log(`IT WORKED! SEE MESSAGE: ${message}`);
+    return message;
+  }
 }
