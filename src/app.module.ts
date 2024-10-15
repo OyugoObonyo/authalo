@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@user/user.module';
 import { join } from 'path';
 import { JobModule } from './job/job.module';
+import { RegistryModule } from './registry/registry.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { JobModule } from './job/job.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     JobModule,
+    RegistryModule,
   ],
 })
 export class AppModule {}

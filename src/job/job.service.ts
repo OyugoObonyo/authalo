@@ -1,10 +1,9 @@
-import { OnModuleDestroy, OnModuleInit, Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Job } from './interfaces/job.interface';
-import PgBoss, { SendOptions } from 'pg-boss';
-import { AuthService } from '@authentication/services/authentication.service';
-import { UserService } from '@user/services/user.service';
-import { ModuleRef } from '@nestjs/core';
+import { ServiceRegistry } from '@src/registry/service/service.registry';
+import * as PgBoss from 'pg-boss';
+import { Job } from './interfaces';
+import { Queue } from './interfaces/pgboss';
 // TODO: Archiving, Error Handling, Jobs deferral, Queue options
 // error event handler, queue stats with monito states
 // Whhat happens after boss is stopped but some jobs are still active?
@@ -24,7 +23,7 @@ import { ModuleRef } from '@nestjs/core';
 // cronMonitorIntervalSeconds?
 // monitor output field of Jobs table for error storage?
 // offWork and notifyWorker applications?
-// expose cliebnt side opertaions to be sued on classes consuming this service.
+// expose client side opertaions to be used on classes consuming this service.
 @Injectable()
 export class JobService implements OnModuleInit, OnModuleDestroy {
   private readonly dbConnectionURl: string;
@@ -33,55 +32,76 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly configs: ConfigService,
     // TODO: Understanding how ModuelRef works ad what it does
-    private readonly moduleRef: ModuleRef,
+    private readonly serviceRegistry: ServiceRegistry,
   ) {
     this.dbConnectionURl = this.configs.get('db.postgresql.url');
   }
-  onModuleInit(): void {
+
+  async onModuleInit(): Promise<void> {
     console.log('INITIALIZING PG JOB MANAGER...');
 
     console.log('DB connection URL: ', this.dbConnectionURl);
     this.executor = new PgBoss(this.dbConnectionURl);
 
-    this.executor.start();
+    await this.executor.start();
+    console.log('EXECUTOR: ', this.executor);
+  }
+
+  getDefinedQueues(): Queue[] {
+    return [
+      { name: 'test-trial' },
+      { name: 'test-trial-2', options: { retryLimit: 10 } },
+      { name: 'test-trial-3', options: { retryLimit: 10, expireInMinutes: 5 } },
+    ];
+  }
+
+  async maybeCreateQueues(
+    definedQueues: Queue[],
+    storedQueues: PgBoss.Queue[],
+  ): Promise<void> {
+    const storedQueuesNames = new Set(
+      storedQueues.map((storedQueue) => storedQueue.name),
+    );
+    definedQueues.forEach(async (definedQueue) => {
+      if (!storedQueuesNames.has(definedQueue.name)) {
+        const { name, options } = definedQueue;
+        await this.executor.createQueue(name, options);
+      }
+    });
   }
 
   async enqueue(
     queue: string,
     job: Job,
-    options?: SendOptions,
+    options?: PgBoss.SendOptions,
   ): Promise<string> {
+    await this.executor.createQueue(queue);
+    console.log('INCOMING QUEUE NAME: ', queue);
+    console.log('INCOMING PAYLOAD: ', job);
     const jobId = await this.executor.send(queue, job, options);
-    console.log(`This is the JobId of the just queued job: ${jobId}`);
+    console.log(`This is the JobId of the just queued job:: ${jobId}`);
     return jobId;
   }
 
-  perform(job: Job): string {
+  async perform(job: Job): Promise<string> {
     const { className, method, args } = job;
-    const resolvedClass = this.resolveClass(className);
-    // TODO: ModuleRef methods like get, resolve etc...
-    // TODO: Validations for function exists etc...
-    const resolvedClassInstance = this.moduleRef.get(resolvedClass, {
-      strict: false,
-    });
-    const result = resolvedClassInstance[method](...args);
-    return `Performed ${job} with these results: ${result}`;
+    const resolvedClass = this.serviceRegistry.getService(className);
+    // TODO: ModuleRef methods like get, resolve etc... familiarization
+    // TODO: Error handle method doesn't exist
+    const result = await resolvedClass[method](...args);
+    return `Called ${method} of class ${className} with these arguements ${args} and got these results: ${result}`;
   }
 
-  resolveClass(classname: string): new (...args: any[]) => any {
-    switch (classname) {
-      case 'authService':
-        return AuthService;
-      case 'userService':
-        return UserService;
-      default:
-        throw new Error("A class with the given name doesn't exist");
-    }
+  async handlers(): Promise<void> {
+    await this.executor.work('test-trial', async (job) => {
+      console.log('Received this job in the test trial queue:: ', job);
+    });
   }
 
   // TODO: Monitor executor lifecycle on DB side and Server side
-  onModuleDestroy(): void {
+  async onModuleDestroy(): Promise<void> {
     console.log('STOPPING PG JOB MANAGER');
+    console.log('EXECUTOR: ', this.executor);
     this.executor.stop();
   }
 }

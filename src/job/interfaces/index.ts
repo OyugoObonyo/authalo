@@ -3,3 +3,8 @@ export interface Job {
   method: string;
   args?: string[];
 }
+
+export interface JobService {
+  publish(): void;
+  perform(): void;
+}

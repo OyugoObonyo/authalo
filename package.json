@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:repl": "yarn run start --entryFile repl",
+    "start:repl": "yarn run start --entryFile repl --watch",
     "start:dev": "yarn run lint && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
