@@ -10,7 +10,7 @@ import { User } from '@user/interfaces/user.interface';
 import { UserService } from '@user/services/user.service';
 import { SignInUserWithEmailAndPassword } from '@authentication/interfaces/dtos/signin-user-dtos.interface';
 import { JobService } from '@src/job/job.service';
-import { Job } from '@src/job/interfaces';
+import { JobData } from '@src/job/interfaces';
 import { HASHING_SERVICE_TOKEN } from '../authentication.constants';
 @Injectable()
 export class AuthService {
@@ -42,14 +42,15 @@ export class AuthService {
     return user;
   }
 
-  async testQueueing(): Promise<Job> {
+  async testQueueing(index: number): Promise<JobData> {
     // TODO: rename job to Task maybe?
-    const job: Job = {
+    const job = {
       className: 'userService',
       method: 'testedQueue',
       args: ['Hello Queue!!'],
     };
-    await this.jobService.enqueue('test-queue', job);
+    console.log('Running testQueueing function with this index: ', index);
+    await this.jobService.enqueue('normal-queue-3', job);
     return job;
   }
 

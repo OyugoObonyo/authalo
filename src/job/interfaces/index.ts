@@ -1,4 +1,5 @@
-export interface Job {
+// TODO: Consider actor and target IDs?
+export interface JobData {
   className: string;
   method: string;
   args?: string[];

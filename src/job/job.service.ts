@@ -2,7 +2,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ServiceRegistry } from '@src/registry/service/service.registry';
 import * as PgBoss from 'pg-boss';
-import { Job } from './interfaces';
+import { JobData } from './interfaces';
 import { Queue } from './interfaces/pgboss';
 // TODO: Archiving, Error Handling, Jobs deferral, Queue options
 // error event handler, queue stats with monito states
@@ -24,11 +24,13 @@ import { Queue } from './interfaces/pgboss';
 // monitor output field of Jobs table for error storage?
 // offWork and notifyWorker applications?
 // expose client side opertaions to be used on classes consuming this service.
+// Delete a queue how? PurgeQueue behaviour??
 @Injectable()
 export class JobService implements OnModuleInit, OnModuleDestroy {
   private readonly dbConnectionURl: string;
-  private executor: PgBoss;
+  private pgBoss: PgBoss;
 
+  // TODO: Understand partitions and their use cases in pgBoss
   constructor(
     private readonly configs: ConfigService,
     // TODO: Understanding how ModuelRef works ad what it does
@@ -38,70 +40,106 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleInit(): Promise<void> {
-    console.log('INITIALIZING PG JOB MANAGER...');
-
-    console.log('DB connection URL: ', this.dbConnectionURl);
-    this.executor = new PgBoss(this.dbConnectionURl);
-
-    await this.executor.start();
-    console.log('EXECUTOR: ', this.executor);
-  }
-
-  getDefinedQueues(): Queue[] {
-    return [
-      { name: 'test-trial' },
-      { name: 'test-trial-2', options: { retryLimit: 10 } },
-      { name: 'test-trial-3', options: { retryLimit: 10, expireInMinutes: 5 } },
-    ];
-  }
-
-  async maybeCreateQueues(
-    definedQueues: Queue[],
-    storedQueues: PgBoss.Queue[],
-  ): Promise<void> {
-    const storedQueuesNames = new Set(
-      storedQueues.map((storedQueue) => storedQueue.name),
-    );
-    definedQueues.forEach(async (definedQueue) => {
-      if (!storedQueuesNames.has(definedQueue.name)) {
-        const { name, options } = definedQueue;
-        await this.executor.createQueue(name, options);
-      }
-    });
+    await this.initializePgBoss();
+    const definedQueues = this.getDefinedQueues();
+    await this.persistDefinedQueues(definedQueues);
+    await this.setupQueueWorkers(definedQueues);
   }
 
   async enqueue(
     queue: string,
-    job: Job,
+    job: JobData,
     options?: PgBoss.SendOptions,
   ): Promise<string> {
-    await this.executor.createQueue(queue);
     console.log('INCOMING QUEUE NAME: ', queue);
     console.log('INCOMING PAYLOAD: ', job);
-    const jobId = await this.executor.send(queue, job, options);
+    const jobId = await this.pgBoss.send(queue, job, options);
     console.log(`This is the JobId of the just queued job:: ${jobId}`);
     return jobId;
   }
 
-  async perform(job: Job): Promise<string> {
-    const { className, method, args } = job;
+  async perform(job: PgBoss.Job<JobData>): Promise<string> {
+    console.log(
+      `Performing job with id ${job.id},name ${job.name} and data: `,
+      job.data,
+    );
+    const { className, method, args } = job.data;
+    console.log('Getting a resolved class from service registry...');
     const resolvedClass = this.serviceRegistry.getService(className);
+    console.log('Got a resolved class from service registry...', resolvedClass);
     // TODO: ModuleRef methods like get, resolve etc... familiarization
     // TODO: Error handle method doesn't exist
     const result = await resolvedClass[method](...args);
     return `Called ${method} of class ${className} with these arguements ${args} and got these results: ${result}`;
   }
 
-  async handlers(): Promise<void> {
-    await this.executor.work('test-trial', async (job) => {
-      console.log('Received this job in the test trial queue:: ', job);
-    });
-  }
-
-  // TODO: Monitor executor lifecycle on DB side and Server side
+  // TODO: Monitor pgBoss lifecycle on DB side and Server side
+  // TODO: Why is this not being invoked?
   async onModuleDestroy(): Promise<void> {
     console.log('STOPPING PG JOB MANAGER');
-    console.log('EXECUTOR: ', this.executor);
-    this.executor.stop();
+    console.log('pgBoss: ', this.pgBoss);
+    this.pgBoss.stop();
+  }
+
+  private async initializePgBoss(): Promise<void> {
+    this.pgBoss = new PgBoss(this.dbConnectionURl);
+    await this.pgBoss.start();
+  }
+
+  private getDefinedQueues(): Queue[] {
+    return [
+      { name: 'normal-queue-3', options: { retryLimit: 10 } },
+      {
+        name: 'singleton-queue-3',
+        options: { retryLimit: 5, policy: 'singleton' },
+      },
+      { name: 'scheduler-queue-3', options: { retryLimit: 5 } },
+      {
+        name: 'stately-queue-3',
+        options: { retryLimit: 10, policy: 'stately' },
+      },
+      {
+        name: 'short-queue-2',
+        options: { expireInMinutes: 5, policy: 'short' },
+      },
+    ];
+  }
+
+  private async persistDefinedQueues(definedQueues: Queue[]): Promise<void> {
+    try {
+      const persistedQueues = await this.pgBoss.getQueues();
+      const persistedQueuesNames = new Set(
+        persistedQueues.map((persistedQueue) => persistedQueue.name),
+      );
+      const unpersistedQueues = definedQueues.filter(
+        (definedQueue) => !persistedQueuesNames.has(definedQueue.name),
+      );
+      for (const queue of unpersistedQueues) {
+        const { name, options } = queue;
+        await this.pgBoss.createQueue(name, options as PgBoss.Queue);
+      }
+    } catch (error) {
+      // TODO: How 2 handle failed queue creation at runtime?
+      // TODO: Always escalate in Sentry in case queue wasn't created
+      console.error('Error while creating defined queue...', error);
+    }
+  }
+
+  private async setupQueueWorkers(definedQueues: Queue[]): Promise<void> {
+    try {
+      for (const queue of definedQueues) {
+        await this.pgBoss.work<JobData>(
+          queue.name,
+          async (jobs: PgBoss.Job<JobData>[]) => {
+            console.log('JOBS: ', jobs);
+            for (const job of jobs) {
+              await this.perform(job);
+            }
+          },
+        );
+      }
+    } catch (error) {
+      console.error('Error setting up queue workers: ', error);
+    }
   }
 }
