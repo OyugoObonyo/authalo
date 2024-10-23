@@ -27,6 +27,7 @@ export class AuthService {
     password,
     ...rest
   }: CreateUserWithEmailAndPassword): Promise<User> {
+    // TODO: Check password strength?
     const passwordHash = await this.hashingService.hash(password);
     return this.userService.create({ ...rest, passwordHash });
   }
@@ -50,6 +51,17 @@ export class AuthService {
       args: ['Hello Queue!!'],
     };
     console.log('Running testQueueing function with this index: ', index);
+    await this.jobService.enqueue('normal-queue-3', job);
+    return job;
+  }
+
+  async testError(): Promise<JobData> {
+    // TODO: rename job to Task maybe?
+    const job = {
+      className: 'userService',
+      method: 'testErrorThrowing',
+      args: [],
+    };
     await this.jobService.enqueue('normal-queue-3', job);
     return job;
   }

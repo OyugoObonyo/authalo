@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { USER_REPOSITORY_TOKEN } from '@user/user.constants';
 import { User } from '@user/interfaces/user.interface';
@@ -33,5 +33,11 @@ export class UserService {
   testedQueue(message: string): string {
     console.log(`IT WORKED! SEE MESSAGE: ${message}`);
     return message;
+  }
+
+  testErrorThrowing(): void {
+    throw new BadRequestException(
+      'Throwing unhandled error while executing a queued task',
+    );
   }
 }

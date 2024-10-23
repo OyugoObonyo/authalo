@@ -4,10 +4,7 @@ import { ServiceRegistry } from '@src/registry/service/service.registry';
 import * as PgBoss from 'pg-boss';
 import { JobData } from './interfaces';
 import { Queue } from './interfaces/pgboss';
-// TODO: Archiving, Error Handling, Jobs deferral, Queue options
-// error event handler, queue stats with monito states
-// Whhat happens after boss is stopped but some jobs are still active?
-// clearStorage utils?
+
 // How to implement only 1 job to be active at a time? For example,
 // when doing batch cron operations and only want 1 job to be active at a time
 // short, singleton vs stately queues policy differences?
@@ -16,7 +13,7 @@ import { Queue } from './interfaces/pgboss';
 // Can 2 different schedules have the same name?
 // every day at midnight, give jobs report and populate the queue stats table
 // getQueue, getQueues and getQueueSize utils 4 various stats
-// retry options for jobs? boss.send vs boss.work?
+// retry options for jobs? boss.send vs boss.work? retry delay etc?
 // dead letter property and its relevance?
 // send with singleton? send with delays? send with retention?
 // insert multiple jobs?
@@ -25,6 +22,7 @@ import { Queue } from './interfaces/pgboss';
 // offWork and notifyWorker applications?
 // expose client side opertaions to be used on classes consuming this service.
 // Delete a queue how? PurgeQueue behaviour??
+// Clean up -> Build class as part of interface etc && more Nest Compliant
 @Injectable()
 export class JobService implements OnModuleInit, OnModuleDestroy {
   private readonly dbConnectionURl: string;
@@ -43,7 +41,7 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
     await this.initializePgBoss();
     const definedQueues = this.getDefinedQueues();
     await this.persistDefinedQueues(definedQueues);
-    await this.setupQueueWorkers(definedQueues);
+    await this.startQueueWorkers(definedQueues);
   }
 
   async enqueue(
@@ -78,11 +76,14 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
   async onModuleDestroy(): Promise<void> {
     console.log('STOPPING PG JOB MANAGER');
     console.log('pgBoss: ', this.pgBoss);
-    this.pgBoss.stop();
+    await this.pgBoss.stop({ close: false });
   }
 
   private async initializePgBoss(): Promise<void> {
-    this.pgBoss = new PgBoss(this.dbConnectionURl);
+    this.pgBoss = new PgBoss({
+      connectionString: this.dbConnectionURl,
+    });
+    this.startListeners();
     await this.pgBoss.start();
   }
 
@@ -125,7 +126,7 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private async setupQueueWorkers(definedQueues: Queue[]): Promise<void> {
+  private async startQueueWorkers(definedQueues: Queue[]): Promise<void> {
     try {
       for (const queue of definedQueues) {
         await this.pgBoss.work<JobData>(
@@ -141,5 +142,22 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       console.error('Error setting up queue workers: ', error);
     }
+  }
+
+  private startListeners(): void {
+    this.pgBoss.on('monitor-states', (stateStats) => {
+      console.log('Monitored PgBoss stats: ', stateStats);
+    });
+
+    this.pgBoss.on('stopped', () => {
+      // TODO: Sentry capture stop event?
+      // TODO: Logger capture stop event?
+      console.log('PGBoss instance stopped: ');
+    });
+    this.pgBoss.on('error', (error) => {
+      // TODO: Sentry cpature all errors?
+      // TODO: Logger capture all errors?
+      console.error('Error caught in error listener: ', error);
+    });
   }
 }
