@@ -2,36 +2,21 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ServiceRegistry } from '@src/registry/service/service.registry';
 import * as PgBoss from 'pg-boss';
-import { JobData } from './interfaces';
-import { Queue } from './interfaces/pgboss';
+import { JobData, QueueManager } from '@queue/interfaces';
+import { Queue } from '@queue/interfaces/pgboss';
 
-// How to implement only 1 job to be active at a time? For example,
-// when doing batch cron operations and only want 1 job to be active at a time
-// short, singleton vs stately queues policy differences?
-// setting up cron jobs and schedules with PGBoss:-
-// What happens when schedules collide i.e try to push a schedule that exists?
-// Can 2 different schedules have the same name?
-// every day at midnight, give jobs report and populate the queue stats table
-// getQueue, getQueues and getQueueSize utils 4 various stats
-// retry options for jobs? boss.send vs boss.work? retry delay etc?
-// dead letter property and its relevance?
-// send with singleton? send with delays? send with retention?
-// insert multiple jobs?
-// cronMonitorIntervalSeconds?
-// monitor output field of Jobs table for error storage?
-// offWork and notifyWorker applications?
-// expose client side opertaions to be used on classes consuming this service.
-// Delete a queue how? PurgeQueue behaviour??
+// expose client side operations to be used on classes consuming this service.
 // Clean up -> Build class as part of interface etc && more Nest Compliant
 @Injectable()
-export class JobService implements OnModuleInit, OnModuleDestroy {
+export class PgBossQueueManager
+  implements QueueManager, OnModuleInit, OnModuleDestroy
+{
   private readonly dbConnectionURl: string;
   private pgBoss: PgBoss;
 
-  // TODO: Understand partitions and their use cases in pgBoss
   constructor(
     private readonly configs: ConfigService,
-    // TODO: Understanding how ModuelRef works ad what it does
+    // TODO: Understanding how ModuelRef works and what it does
     private readonly serviceRegistry: ServiceRegistry,
   ) {
     this.dbConnectionURl = this.configs.get('db.postgresql.url');
@@ -47,35 +32,36 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
   async enqueue(
     queue: string,
     job: JobData,
+    // TODO: Send Options wrapped in a generic? Or hidden from public interface?
+    // Having it in the public interface makes it difficult to change
+    // How can I add more user context to job by specifying initiator id?
     options?: PgBoss.SendOptions,
-  ): Promise<string> {
-    console.log('INCOMING QUEUE NAME: ', queue);
-    console.log('INCOMING PAYLOAD: ', job);
-    const jobId = await this.pgBoss.send(queue, job, options);
-    console.log(`This is the JobId of the just queued job:: ${jobId}`);
-    return jobId;
+  ): Promise<void> {
+    this.pgBoss.send(queue, job, options);
   }
 
-  async perform(job: PgBoss.Job<JobData>): Promise<string> {
-    console.log(
-      `Performing job with id ${job.id},name ${job.name} and data: `,
-      job.data,
-    );
+  async schedule(
+    queue: string,
+    cronExpression: string,
+    job: JobData,
+    options?: PgBoss.ScheduleOptions,
+  ): Promise<void> {
+    // TODO: How do I log per job?
+    await this.pgBoss.schedule(queue, cronExpression, job, options);
+  }
+
+  async perform(job: PgBoss.Job<JobData>): Promise<void> {
     const { className, method, args } = job.data;
-    console.log('Getting a resolved class from service registry...');
     const resolvedClass = this.serviceRegistry.getService(className);
-    console.log('Got a resolved class from service registry...', resolvedClass);
     // TODO: ModuleRef methods like get, resolve etc... familiarization
     // TODO: Error handle method doesn't exist
-    const result = await resolvedClass[method](...args);
-    return `Called ${method} of class ${className} with these arguements ${args} and got these results: ${result}`;
+    resolvedClass[method](...args);
   }
 
   // TODO: Monitor pgBoss lifecycle on DB side and Server side
   // TODO: Why is this not being invoked?
   async onModuleDestroy(): Promise<void> {
     console.log('STOPPING PG JOB MANAGER');
-    console.log('pgBoss: ', this.pgBoss);
     await this.pgBoss.stop({ close: false });
   }
 
@@ -103,6 +89,9 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
         name: 'short-queue-2',
         options: { expireInMinutes: 5, policy: 'short' },
       },
+      { name: 'generate-some-report', options: { retryLimit: 10 } },
+      { name: 'global-scheduler', options: { retryLimit: 10 } },
+      { name: 'failed-nomal-queue-3-jobs', options: { retryLimit: 5 } },
     ];
   }
 
@@ -132,7 +121,6 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
         await this.pgBoss.work<JobData>(
           queue.name,
           async (jobs: PgBoss.Job<JobData>[]) => {
-            console.log('JOBS: ', jobs);
             for (const job of jobs) {
               await this.perform(job);
             }
@@ -155,7 +143,7 @@ export class JobService implements OnModuleInit, OnModuleDestroy {
       console.log('PGBoss instance stopped: ');
     });
     this.pgBoss.on('error', (error) => {
-      // TODO: Sentry cpature all errors?
+      // TODO: Sentry capture all errors?
       // TODO: Logger capture all errors?
       console.error('Error caught in error listener: ', error);
     });

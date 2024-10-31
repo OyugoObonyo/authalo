@@ -31,6 +31,7 @@ export class UserService {
   }
 
   testedQueue(message: string): string {
+    console.log(new Date());
     console.log(`IT WORKED! SEE MESSAGE: ${message}`);
     return message;
   }

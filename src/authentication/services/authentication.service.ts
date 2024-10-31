@@ -1,24 +1,20 @@
 import { HashingService } from '@authentication/interfaces/hashing-service.interface';
-import {
-  ForbiddenException,
-  forwardRef,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { CronExpression } from '@common/enums/cron-expression.enum';
 import { CreateUserWithEmailAndPassword } from '@user/interfaces/dtos/create-user-dtos.interface';
 import { User } from '@user/interfaces/user.interface';
 import { UserService } from '@user/services/user.service';
 import { SignInUserWithEmailAndPassword } from '@authentication/interfaces/dtos/signin-user-dtos.interface';
-import { JobService } from '@src/job/job.service';
-import { JobData } from '@src/job/interfaces';
-import { HASHING_SERVICE_TOKEN } from '../authentication.constants';
+import { JobData, QueueManager } from '@queue/interfaces';
+import { QUEUE_MANAGER_TOKEN } from '@queue/queue.constants';
+import { HASHING_SERVICE_TOKEN } from '@authentication/authentication.constants';
+import { SendOptions } from 'pg-boss';
 @Injectable()
 export class AuthService {
   constructor(
-    // TODO: Correct usage? Why?
-    @Inject(forwardRef(() => JobService))
-    private readonly jobService: JobService,
     private readonly userService: UserService,
+    @Inject(QUEUE_MANAGER_TOKEN)
+    private readonly queueManager: QueueManager,
     @Inject(HASHING_SERVICE_TOKEN)
     private readonly hashingService: HashingService,
   ) {}
@@ -51,7 +47,7 @@ export class AuthService {
       args: ['Hello Queue!!'],
     };
     console.log('Running testQueueing function with this index: ', index);
-    await this.jobService.enqueue('normal-queue-3', job);
+    await this.queueManager.enqueue('normal-queue-3', job);
     return job;
   }
 
@@ -62,8 +58,39 @@ export class AuthService {
       method: 'testErrorThrowing',
       args: [],
     };
-    await this.jobService.enqueue('normal-queue-3', job);
+    await this.queueManager.enqueue<SendOptions>('normal-queue-3', job, {
+      deadLetter: 'failed-nomal-queue-3-jobs',
+      retryBackoff: true,
+    });
     return job;
+  }
+
+  async testSchedule(): Promise<void> {
+    const job = {
+      className: 'userService',
+      method: 'testedQueue',
+      args: ['Hello Scheduler!!'],
+    };
+    //TODO: Make queue name type safe?
+    // Timezone specification? Local time or UTC time?
+    await this.queueManager.schedule(
+      'short-queue-2',
+      CronExpression.EVERY_MINUTE_OF_6_AM,
+      job,
+    );
+  }
+
+  async testScheduleGenerateReport(): Promise<void> {
+    const job = {
+      className: 'userService',
+      method: 'testedQueue',
+      args: ['Generating some report now...'],
+    };
+    await this.queueManager.schedule(
+      'generate-some-report',
+      CronExpression.EVERY_MINUTE,
+      job,
+    );
   }
 
   logOut(): void {}

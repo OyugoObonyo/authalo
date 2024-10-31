@@ -3,7 +3,7 @@ import { SessionEntity } from '@authentication/impl/entities/postgresql/session.
 import { SessionRepository } from '@authentication/impl/repositories/postgresql/session.repository';
 import { SESSION_REPOSITORY_TOKEN } from '@authentication/impl/repositories/repository.tokens';
 import { provideRepository } from '@common/providers';
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BcryptHashingService } from '@authentication/impl/hashing/bcrypt.hashing.service';
 import { HASHING_SERVICE_TOKEN } from '@authentication/authentication.constants';
@@ -11,14 +11,13 @@ import { UserModule } from '@user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from '@configs/jwt.config';
 import { ConfigModule } from '@nestjs/config';
-import { JobModule } from '@src/job/job.module';
 import { AuthService } from './services/authentication.service';
+import { QUEUE_MANAGER_TOKEN } from '@queue/queue.constants';
+import { PgBossQueueManager } from '@queue/impl/managers/pgboss.manager';
 @Module({
   imports: [
     TypeOrmModule.forFeature([SessionEntity, RefreshTokenEntity]),
     UserModule,
-    // TODO: investigate forwardRef
-    forwardRef(() => JobModule),
     // TODO: investigate asProvider?
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
@@ -32,6 +31,10 @@ import { AuthService } from './services/authentication.service';
     {
       provide: HASHING_SERVICE_TOKEN,
       useClass: BcryptHashingService,
+    },
+    {
+      provide: QUEUE_MANAGER_TOKEN,
+      useClass: PgBossQueueManager,
     },
     AuthService,
   ],

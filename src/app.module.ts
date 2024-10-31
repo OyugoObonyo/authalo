@@ -7,7 +7,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@user/user.module';
 import { join } from 'path';
-import { JobModule } from './job/job.module';
+import { QueueModule } from './queue/queue.module';
 import { RegistryModule } from './registry/registry.module';
 
 @Module({
@@ -38,7 +38,7 @@ import { RegistryModule } from './registry/registry.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
-    JobModule,
+    QueueModule,
     RegistryModule,
   ],
 })

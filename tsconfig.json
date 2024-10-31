@@ -21,9 +21,11 @@
       "@src/*": ["src/*"],
       "@common/*": ["src/common/*"],
       "@user/*": ["src/user/*"],
-      "@db/*": ["database/*"],
+      "@queue/*": ["src/queue/*"],
+      "@registry/*": ["src/registry/*"],
       "@authentication/*": ["src/authentication/*"],
-      "@configs/*": ["configs/*"],
+      "@db/*": ["database/*"],
+      "@configs/*": ["configs/*"]
     }
   }
 }

@@ -88,6 +88,8 @@
       "^@user/(.*)$": "<rootDir>/../src/user/$1",
       "^@db/(.*)$": "<rootDir>/../src/database/$1",
       "^@authentication/(.*)$": "<rootDir>/../src/authentication/$1",
+      "^@registry/(.*)$": "<rootDir>/../src/registry/$1",
+      "^@queue/(.*)$": "<rootDir>/../src/queue/$1",
       "^@configs/(.*)$": "<rootDir>/../configs/$1"
     }
   }
