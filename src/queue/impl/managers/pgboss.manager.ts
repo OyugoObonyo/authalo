@@ -1,9 +1,9 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ServiceRegistry } from '@src/registry/service/service.registry';
-import * as PgBoss from 'pg-boss';
 import { JobData, QueueManager } from '@queue/interfaces';
 import { Queue } from '@queue/interfaces/pgboss';
+import { ServiceRegistry } from '@registry/services/service.registry';
+import * as PgBoss from 'pg-boss';
 
 // expose client side operations to be used on classes consuming this service.
 // Clean up -> Build class as part of interface etc && more Nest Compliant
@@ -16,9 +16,10 @@ export class PgBossQueueManager
 
   constructor(
     private readonly configs: ConfigService,
-    // TODO: Understanding how ModuelRef works and what it does
     private readonly serviceRegistry: ServiceRegistry,
   ) {
+    console.log('Config Service: ', this.configs);
+    console.log('Service Registry: ', this.serviceRegistry);
     this.dbConnectionURl = this.configs.get('db.postgresql.url');
   }
 
@@ -29,32 +30,30 @@ export class PgBossQueueManager
     await this.startQueueWorkers(definedQueues);
   }
 
-  async enqueue(
+  async enqueue<T, M extends keyof T, O = PgBoss.SendOptions>(
     queue: string,
-    job: JobData,
-    // TODO: Send Options wrapped in a generic? Or hidden from public interface?
-    // Having it in the public interface makes it difficult to change
-    // How can I add more user context to job by specifying initiator id?
-    options?: PgBoss.SendOptions,
+    job: JobData<T, M>,
+    options?: O,
   ): Promise<void> {
     this.pgBoss.send(queue, job, options);
   }
 
-  async schedule(
+  async schedule<T, M extends keyof T, O = PgBoss.ScheduleOptions>(
     queue: string,
     cronExpression: string,
-    job: JobData,
-    options?: PgBoss.ScheduleOptions,
+    job: JobData<T, M>,
+    options?: O,
   ): Promise<void> {
     // TODO: How do I log per job?
     await this.pgBoss.schedule(queue, cronExpression, job, options);
   }
 
-  async perform(job: PgBoss.Job<JobData>): Promise<void> {
+  // TODO: Fix job function siganture?
+  async perform<T, M extends keyof T>(
+    job: PgBoss.Job<JobData<T, M>>,
+  ): Promise<void> {
     const { className, method, args } = job.data;
     const resolvedClass = this.serviceRegistry.getService(className);
-    // TODO: ModuleRef methods like get, resolve etc... familiarization
-    // TODO: Error handle method doesn't exist
     resolvedClass[method](...args);
   }
 
@@ -118,9 +117,9 @@ export class PgBossQueueManager
   private async startQueueWorkers(definedQueues: Queue[]): Promise<void> {
     try {
       for (const queue of definedQueues) {
-        await this.pgBoss.work<JobData>(
+        await this.pgBoss.work<JobData<any, any>>(
           queue.name,
-          async (jobs: PgBoss.Job<JobData>[]) => {
+          async (jobs: PgBoss.Job<JobData<any, any>>[]) => {
             for (const job of jobs) {
               await this.perform(job);
             }

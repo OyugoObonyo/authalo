@@ -7,8 +7,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '@user/user.module';
 import { join } from 'path';
-import { QueueModule } from './queue/queue.module';
-import { RegistryModule } from './registry/registry.module';
+import { QueueModule } from '@queue/queue.module';
+import { RegistryModule } from '@registry/registry.module';
 
 @Module({
   imports: [

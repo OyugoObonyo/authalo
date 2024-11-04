@@ -1,22 +1,26 @@
 import { CronExpression } from '@common/enums/cron-expression.enum';
 
+// TODO: Undertsand this class definition
+
 // TODO: Consider actor and target IDs?
-export interface JobData {
+// TODO: Make className more type safe?
+export interface JobData<T, M extends keyof T> {
   className: string;
-  method: string;
-  args?: string[];
+  method: M;
+  args: T[M] extends (...args: any[]) => any ? Parameters<T[M]> : never;
+  actorId?: string | number;
 }
 
 export interface QueueManager {
-  enqueue<T = unknown>(
+  enqueue<T, M extends keyof T, O = unknown>(
     queueName: string,
-    job: JobData,
-    options?: T,
+    job: JobData<T, M>,
+    options?: O,
   ): Promise<void>;
-  schedule<T = unknown>(
+  schedule<T, M extends keyof T, O = unknown>(
     queueName: string,
     cronExpression: CronExpression,
-    job: JobData,
-    options?: T,
+    job: JobData<T, M>,
+    options?: O,
   ): Promise<void>;
 }

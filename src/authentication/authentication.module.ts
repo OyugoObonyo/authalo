@@ -11,9 +11,10 @@ import { UserModule } from '@user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from '@configs/jwt.config';
 import { ConfigModule } from '@nestjs/config';
-import { AuthService } from './services/authentication.service';
+import { AuthService } from '@authentication/services/authentication.service';
 import { QUEUE_MANAGER_TOKEN } from '@queue/queue.constants';
 import { PgBossQueueManager } from '@queue/impl/managers/pgboss.manager';
+import { RegistryModule } from '@registry/registry.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([SessionEntity, RefreshTokenEntity]),
@@ -21,6 +22,7 @@ import { PgBossQueueManager } from '@queue/impl/managers/pgboss.manager';
     // TODO: investigate asProvider?
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
+    RegistryModule,
   ],
   providers: [
     ...provideRepository(

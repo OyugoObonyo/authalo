@@ -1,20 +1,20 @@
-import { AuthService } from '@authentication/services/authentication.service';
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { UserService } from '@user/services/user.service';
+import { AuthService } from '@authentication/services/authentication.service';
 
 @Injectable()
 export class ServiceRegistry {
   // TODO: How to improve type safety?
   private services: { [key: string]: any } = {};
 
-  constructor(
-    // @Inject(forwardRef(() => AuthService))
-    private readonly authService: AuthService,
-    // @Inject(forwardRef(() => UserService))
-    private readonly userService: UserService,
-  ) {
-    this.services['authService'] = this.authService;
-    this.services['userService'] = this.userService;
+  constructor(private readonly moduleRef: ModuleRef) {
+    this.services['AuthService'] = this.moduleRef.get(AuthService, {
+      strict: false,
+    });
+    this.services['UserService'] = this.moduleRef.get(UserService, {
+      strict: false,
+    });
   }
 
   getService(serviceName: string): any {

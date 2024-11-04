@@ -39,35 +39,39 @@ export class AuthService {
     return user;
   }
 
-  async testQueueing(index: number): Promise<JobData> {
+  async testQueueing(): Promise<void> {
     // TODO: rename job to Task maybe?
-    const job = {
-      className: 'userService',
+    // Define buildJobParams method in targetClass
+    const job: JobData<UserService, 'testedQueue'> = {
+      className: 'UserService',
       method: 'testedQueue',
-      args: ['Hello Queue!!'],
+      args: ['Hello Queue!'],
     };
-    console.log('Running testQueueing function with this index: ', index);
+    console.log('Running testQueueing function with this job: ', job);
     await this.queueManager.enqueue('normal-queue-3', job);
-    return job;
   }
 
-  async testError(): Promise<JobData> {
+  async testError(): Promise<void> {
     // TODO: rename job to Task maybe?
-    const job = {
-      className: 'userService',
+    const job: JobData<UserService, 'testErrorThrowing'> = {
+      className: 'UserService',
       method: 'testErrorThrowing',
       args: [],
     };
-    await this.queueManager.enqueue<SendOptions>('normal-queue-3', job, {
+    // TODO: How to call enqueue function without generics and getting straight to SendOptions?
+    await this.queueManager.enqueue<
+      UserService,
+      'testErrorThrowing',
+      SendOptions
+    >('normal-queue-3', job, {
       deadLetter: 'failed-nomal-queue-3-jobs',
       retryBackoff: true,
     });
-    return job;
   }
 
   async testSchedule(): Promise<void> {
-    const job = {
-      className: 'userService',
+    const job: JobData<UserService, 'testedQueue'> = {
+      className: 'UserService',
       method: 'testedQueue',
       args: ['Hello Scheduler!!'],
     };
@@ -81,13 +85,15 @@ export class AuthService {
   }
 
   async testScheduleGenerateReport(): Promise<void> {
-    const job = {
-      className: 'userService',
+    const job: JobData<UserService, 'testedQueue'> = {
+      className: 'UserService',
       method: 'testedQueue',
-      args: ['Generating some report now...'],
+      args: ['Generating some report...'],
     };
+    //TODO: Make queue name type safe?
+    // Timezone specification? Local time or UTC time?
     await this.queueManager.schedule(
-      'generate-some-report',
+      'short-queue-2',
       CronExpression.EVERY_MINUTE,
       job,
     );
