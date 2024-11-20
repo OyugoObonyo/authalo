@@ -1,4 +1,4 @@
-import { SessionEntity } from '@src/authentication/impl/entities/postgresql/session.entity';
+import { SessionEntity } from '@authentication/impl/entities/postgresql/session.entity';
 import { Session } from '@authentication/interfaces/session.interface';
 import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { DatabaseException } from 'database/exceptions/database.exception';

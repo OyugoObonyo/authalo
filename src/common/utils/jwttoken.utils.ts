@@ -1,7 +1,6 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { IncomingHttpHeaders } from 'http';
 import * as jwt from 'jsonwebtoken';
-import { UnauthorizedException } from '@nestjs/common';
-import { ObjectLiteral } from '@common/interfaces/object-literal';
 
 export function extractBearerTokenFromHeader(
   headers: IncomingHttpHeaders,
@@ -14,8 +13,8 @@ export function extractBearerTokenFromHeader(
   }
 }
 
-// TODO: maybe make return type more rigid?
-export function decodeToken(token: string, privateKey: string): ObjectLiteral {
+// TODO: Make return type more rigid?
+export function decodeToken(token: string, privateKey: string): any {
   try {
     // TODO: maybe verify audience and issuer too?
     const decodedToken = jwt.verify(token, privateKey);

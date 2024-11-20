@@ -1,4 +1,4 @@
-import { User } from '@users/interfaces/user.interface';
+import { User } from '@user/interfaces/user.interface';
 
 export interface Session {
   id: string;

@@ -1,4 +1,4 @@
-import { SESSION_REPOSITORY_TOKEN } from '@src/authentication/impl/repositories/repository.tokens';
+import { SESSION_REPOSITORY_TOKEN } from '@authentication/impl/repositories/repository.tokens';
 import { Session } from '@authentication/interfaces/session.interface';
 import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { Inject } from '@nestjs/common';

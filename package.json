@@ -9,6 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "start:repl": "yarn run start --entryFile repl --watch",
     "start:dev": "yarn run lint && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -27,12 +28,16 @@
     "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.0",
     "@nestjs/graphql": "^12.2.0",
+    "@nestjs/jwt": "^10.2.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.2",
     "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "graphql": "^16.9.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0",
+    "pg-boss": "^10.1.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.20"
@@ -80,9 +85,11 @@
     "moduleNameMapper": {
       "^@src/(.*)$": "<rootDir>/../src/$1",
       "^@common/(.*)$": "<rootDir>/../src/common/$1",
-      "^@users/(.*)$": "<rootDir>/../src/users/$1",
+      "^@user/(.*)$": "<rootDir>/../src/user/$1",
       "^@db/(.*)$": "<rootDir>/../src/database/$1",
       "^@authentication/(.*)$": "<rootDir>/../src/authentication/$1",
+      "^@registry/(.*)$": "<rootDir>/../src/registry/$1",
+      "^@queue/(.*)$": "<rootDir>/../src/queue/$1",
       "^@configs/(.*)$": "<rootDir>/../configs/$1"
     }
   }

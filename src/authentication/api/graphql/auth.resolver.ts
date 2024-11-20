@@ -1,6 +1,6 @@
-import { AuthService } from '@authentication/services/auth.service';
+import { AuthService } from '@authentication/services/authentication.service';
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { UserModel } from '@users/api/graphql/models/user.model';
+import { UserModel } from '@user/api/graphql/models/user.model';
 
 @Resolver()
 export class AuthResolver {
