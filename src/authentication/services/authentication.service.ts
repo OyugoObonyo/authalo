@@ -9,6 +9,8 @@ import { JobData, QueueManager } from '@queue/interfaces';
 import { QUEUE_MANAGER_TOKEN } from '@queue/queue.constants';
 import { HASHING_SERVICE_TOKEN } from '@authentication/authentication.constants';
 import { SendOptions } from 'pg-boss';
+import { cpus } from 'node:os';
+import cluster from 'node:cluster';
 @Injectable()
 export class AuthService {
   constructor(
@@ -63,10 +65,7 @@ export class AuthService {
       UserService,
       'testErrorThrowing',
       SendOptions
-    >('normal-queue-3', job, {
-      deadLetter: 'failed-nomal-queue-3-jobs',
-      retryBackoff: true,
-    });
+    >('failed-nomal-queue-3-jobs', job);
   }
 
   async testSchedule(): Promise<void> {
@@ -97,6 +96,15 @@ export class AuthService {
       CronExpression.EVERY_MINUTE,
       job,
     );
+  }
+
+  public fibonacci(n: number): number {
+    console.log(cpus().length);
+    console.log(cluster.isPrimary);
+    if (n < 2) {
+      return n;
+    }
+    return this.fibonacci(n - 1) + this.fibonacci(n - 2);
   }
 
   logOut(): void {}

@@ -17,7 +17,6 @@ export class ServiceRegistry implements OnModuleInit {
     this.services['UserService'] = this.moduleRef.get(UserService, {
       strict: false,
     });
-    console.log(this.services);
   }
 
   getService(serviceName: string): any {

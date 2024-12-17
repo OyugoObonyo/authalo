@@ -9,6 +9,7 @@ import { UserModule } from '@user/user.module';
 import { join } from 'path';
 import { QueueModule } from '@queue/queue.module';
 import { RegistryModule } from '@registry/registry.module';
+import { TrialController } from './trial-app.controller';
 
 @Module({
   imports: [
@@ -41,5 +42,6 @@ import { RegistryModule } from '@registry/registry.module';
     QueueModule,
     RegistryModule,
   ],
+  controllers: [TrialController],
 })
 export class AppModule {}

@@ -22,5 +22,8 @@ export function appConfigsLoader(): ObjectLiteral {
       // TODO: Why JSON.parse()?
       debug: JSON.parse(process.env.NEST_DEBUG),
     },
+    sentry: {
+      dsn: process.env.SENTRY_DSN,
+    },
   };
 }

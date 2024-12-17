@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JobData, QueueManager } from '@queue/interfaces';
 import { Queue } from '@queue/interfaces/pgboss';
 import { ServiceRegistry } from '@registry/services/service.registry';
-import * as PgBoss from 'pg-boss';
+import PgBoss from 'pg-boss';
 
 // expose client side operations to be used on classes consuming this service.
 // Clean up -> Build class as part of interface etc && more Nest Compliant
@@ -18,8 +18,6 @@ export class PgBossQueueManager
     private readonly configs: ConfigService,
     private readonly serviceRegistry: ServiceRegistry,
   ) {
-    console.log('Config Service: ', this.configs);
-    console.log('Service Registry: ', this.serviceRegistry);
     this.dbConnectionURl = this.configs.get('db.postgresql.url');
   }
 
@@ -52,9 +50,22 @@ export class PgBossQueueManager
   async perform<T, M extends keyof T>(
     job: PgBoss.Job<JobData<T, M>>,
   ): Promise<void> {
-    const { className, method, args } = job.data;
-    const resolvedClass = this.serviceRegistry.getService(className);
-    resolvedClass[method](...args);
+    try {
+      const { className, method, args } = job.data;
+      const resolvedClass = this.serviceRegistry.getService(className);
+      resolvedClass[method](...args);
+    } catch (error) {
+      console.log('Active Job: ', job);
+      const jobDetails = await this.pgBoss.getJobById(job.name, job.id, {
+        includeArchive: false,
+      });
+      console.log('Fetched job: ', jobDetails);
+      if (jobDetails.retryCount === jobDetails.retryLimit) {
+        console.log(jobDetails);
+      }
+
+      throw error;
+    }
   }
 
   // TODO: Monitor pgBoss lifecycle on DB side and Server side
@@ -74,10 +85,13 @@ export class PgBossQueueManager
 
   private getDefinedQueues(): Queue[] {
     return [
-      { name: 'normal-queue-3', options: { retryLimit: 10 } },
+      {
+        name: 'normal-queue-3',
+        options: { retryLimit: 10, deadLetter: 'failed-nomal-queue-3-jobs' },
+      },
       {
         name: 'singleton-queue-3',
-        options: { retryLimit: 5, policy: 'singleton' },
+        options: { retryLimit: 7, policy: 'singleton' },
       },
       { name: 'scheduler-queue-3', options: { retryLimit: 5 } },
       {
@@ -89,8 +103,11 @@ export class PgBossQueueManager
         options: { expireInMinutes: 5, policy: 'short' },
       },
       { name: 'generate-some-report', options: { retryLimit: 10 } },
-      { name: 'global-scheduler', options: { retryLimit: 10 } },
-      { name: 'failed-nomal-queue-3-jobs', options: { retryLimit: 5 } },
+      { name: 'global-scheduler', options: { retryLimit: 5 } },
+      {
+        name: 'failed-nomal-queue-3-jobs',
+        options: { retryLimit: 2, deadLetter: 'global-scheduler' },
+      },
     ];
   }
 
@@ -100,12 +117,13 @@ export class PgBossQueueManager
       const persistedQueuesNames = new Set(
         persistedQueues.map((persistedQueue) => persistedQueue.name),
       );
-      const unpersistedQueues = definedQueues.filter(
-        (definedQueue) => !persistedQueuesNames.has(definedQueue.name),
-      );
-      for (const queue of unpersistedQueues) {
-        const { name, options } = queue;
-        await this.pgBoss.createQueue(name, options as PgBoss.Queue);
+      for (const queueDefinitions of definedQueues) {
+        const { name, options } = queueDefinitions;
+        if (persistedQueuesNames.has(name)) {
+          await this.pgBoss.updateQueue(name, options as PgBoss.Queue);
+        } else {
+          await this.pgBoss.createQueue(name, options as PgBoss.Queue);
+        }
       }
     } catch (error) {
       // TODO: How 2 handle failed queue creation at runtime?
