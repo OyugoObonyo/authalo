@@ -15,7 +15,7 @@ export class UserRepository implements BaseRepository<UserEntity> {
   async create(params: Partial<UserEntity>): Promise<UserEntity> {
     try {
       const user = this.repo.create(params);
-      return await this.repo.save(user);
+      return this.repo.save(user);
     } catch (error) {
       throw new DatabaseException('Database error while creating new user', {
         cause: error.message,

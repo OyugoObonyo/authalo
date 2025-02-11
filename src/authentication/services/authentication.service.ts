@@ -39,6 +39,8 @@ export class AuthService {
     return user;
   }
 
+  async refreshToken(): Promise<void> {}
+
   async testQueueing(): Promise<void> {
     // TODO: rename job to Task maybe?
     // Define buildJobParams method in targetClass

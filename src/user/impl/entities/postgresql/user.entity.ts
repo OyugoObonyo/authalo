@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { SessionEntity } from '@authentication/impl/entities/postgresql/session.entity';
+import { RefreshTokenEntity } from '@authentication/impl/entities/postgresql/refresh-token.entity';
 
 // TODO: Make entity spec 1-to-1 with migrations definition
 // TODO: Fields to make unique?
@@ -53,6 +54,10 @@ export class UserEntity implements User {
   @Column(() => Timestamps, { prefix: '' })
   timestamps: Timestamps;
 
+  @OneToMany(() => RefreshTokenEntity, (refreshToken) => refreshToken.user)
+  refreshTokens: RefreshTokenEntity[];
+
+  // TODO: Remove Sessions table === technical debt
   @OneToMany(() => SessionEntity, (session) => session.user)
   sessions: SessionEntity[];
 }

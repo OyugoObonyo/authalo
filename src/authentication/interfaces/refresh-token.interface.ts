@@ -1,9 +1,10 @@
-import { Session } from '@authentication/interfaces/session.interface';
+import { User } from '@user/interfaces/user.interface';
 
 export interface RefreshToken {
   id: string;
   isRevoked: boolean;
-  session: Session;
+  expiresAt: Date;
+  user: User;
   createdAt?: Date;
   updatedAt?: Date;
 }

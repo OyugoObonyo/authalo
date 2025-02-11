@@ -15,6 +15,7 @@ import { AuthService } from '@authentication/services/authentication.service';
 import { QUEUE_MANAGER_TOKEN } from '@queue/queue.constants';
 import { PgBossQueueManager } from '@queue/impl/managers/pgboss.manager';
 import { RegistryModule } from '@registry/registry.module';
+import { TokenService } from '@authentication/services/token.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([SessionEntity, RefreshTokenEntity]),
@@ -39,6 +40,7 @@ import { RegistryModule } from '@registry/registry.module';
       useClass: PgBossQueueManager,
     },
     AuthService,
+    TokenService,
   ],
   exports: [AuthService],
 })

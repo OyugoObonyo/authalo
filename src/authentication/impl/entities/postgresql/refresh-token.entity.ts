@@ -1,7 +1,7 @@
-import { SessionEntity } from '@authentication/impl/entities/postgresql/session.entity';
 import { RefreshToken } from '@authentication/interfaces/refresh-token.interface';
+import { UserEntity } from '@user/impl/entities/postgresql/user.entity';
 import { Timestamps } from 'database/embeds/timestamps.embed';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'refresh_tokens' })
 export class RefreshTokenEntity implements RefreshToken {
@@ -11,12 +11,15 @@ export class RefreshTokenEntity implements RefreshToken {
   @Column({ name: 'is_revoked', default: false })
   isRevoked: boolean;
 
+  @Column({ name: 'expires_at', type: 'timestamptz' })
+  expiresAt: Date;
+
   @Column(() => Timestamps)
   timestamps: Timestamps;
 
-  @OneToOne(() => SessionEntity, (session) => session.refreshToken, {
+  @ManyToOne(() => UserEntity, (user) => user.refreshTokens, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'session_id' })
-  session: SessionEntity;
+  @JoinColumn({ name: 'user_id' })
+  user: UserEntity;
 }

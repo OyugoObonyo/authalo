@@ -1,15 +1,8 @@
-import { Timestamps } from 'database/embeds/timestamps.embed';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryColumn,
-} from 'typeorm';
-import { UserEntity } from '@user/impl/entities/postgresql/user.entity';
+// TODO: Work on database module aliasing
 import { Session } from '@authentication/interfaces/session.interface';
-import { RefreshTokenEntity } from '@authentication/impl/entities/postgresql/refresh-token.entity';
+import { UserEntity } from '@user/impl/entities/postgresql/user.entity';
+import { Timestamps } from 'database/embeds/timestamps.embed';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'sessions' })
 export class SessionEntity implements Session {
@@ -30,12 +23,6 @@ export class SessionEntity implements Session {
 
   @Column(() => Timestamps)
   timestamps: Timestamps;
-
-  @OneToOne(() => RefreshTokenEntity, (refreshToken) => refreshToken.session, {
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn({ name: 'refresh_token_id' })
-  refreshToken: RefreshTokenEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.sessions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })

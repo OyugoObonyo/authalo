@@ -1,11 +1,11 @@
 import { registerAs } from '@nestjs/config';
 
+const FIVE_MINUTES = 5 * 3600;
+
 export default registerAs('jwt', () => {
   return {
     secret: process.env.JWT_SECRET,
-    // TODO: Check best practices for aud and iss naming. Audience could be $app-name?
-    audience: 'Authalo-client',
-    issuer: 'Authalo-server',
-    accessTokenTtl: 3600,
+    issuer: 'Authalo',
+    accessTokenTtl: FIVE_MINUTES,
   };
 });

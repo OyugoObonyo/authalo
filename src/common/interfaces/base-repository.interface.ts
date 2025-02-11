@@ -3,6 +3,7 @@ import { GetOneOptions } from '@common/interfaces/get-options.interface';
 // TODO: Remake GetOptions and GetOneOptions; current implementation is off
 // TODO: Instead of defining getById solo, maybe consider getByQ() for wider implementations
 // TODO: Delete junk methods; methods not used/won't be used
+// TODO: Metaprogramming like defcrud for CRUD operations?
 export interface BaseRepository<T> {
   create(params: Partial<T>): Promise<T>;
   get?(): Promise<T[]>;
