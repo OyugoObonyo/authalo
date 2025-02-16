@@ -13,7 +13,7 @@ export interface BaseRepository<T> {
   getOneBy?<K extends keyof T>(arg: { [P in K]: T[P] }): Promise<T>;
   getById?(id: string): Promise<T>;
   getOne?(options: GetOneOptions<T>): Promise<T>;
-  update?(entityId: string | number, params: Partial<T>): Promise<Partial<T>>;
+  update?(entityId: string | number, params: Partial<T>): Promise<T>;
   softDelete?(entity: T): Promise<T>;
   delete?(entity: T): Promise<void>;
 }

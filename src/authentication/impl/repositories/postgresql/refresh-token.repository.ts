@@ -39,4 +39,25 @@ export class RefreshTokenRepository
       });
     }
   }
+
+  async update(
+    entityId: string,
+    params: Partial<RefreshTokenEntity>,
+  ): Promise<RefreshTokenEntity> {
+    try {
+      const result = await this.repo
+        .createQueryBuilder()
+        .update(RefreshTokenEntity)
+        .set(params)
+        .where('id = :id', { id: entityId })
+        .returning('*')
+        .execute();
+      return result.raw[0];
+    } catch (error) {
+      throw new DatabaseException('Failed to update token', {
+        cause: error.message,
+        description: error.detail,
+      });
+    }
+  }
 }

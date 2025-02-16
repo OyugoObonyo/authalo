@@ -17,10 +17,13 @@ export class UserRepository implements BaseRepository<UserEntity> {
       const user = this.repo.create(params);
       return this.repo.save(user);
     } catch (error) {
-      throw new DatabaseException('Database error while creating new user', {
-        cause: error.message,
-        description: error.detail,
-      });
+      throw new DatabaseException(
+        'Failed to create user. Please try again later',
+        {
+          cause: error.message,
+          description: error.detail,
+        },
+      );
     }
   }
 
@@ -28,10 +31,13 @@ export class UserRepository implements BaseRepository<UserEntity> {
     try {
       return await this.repo.find();
     } catch (error) {
-      throw new DatabaseException('Database error while getting users', {
-        cause: error.message,
-        description: error.detail,
-      });
+      throw new DatabaseException(
+        'Failed to fetch users. Please try again later',
+        {
+          cause: error.message,
+          description: error.detail,
+        },
+      );
     }
   }
 
@@ -42,10 +48,13 @@ export class UserRepository implements BaseRepository<UserEntity> {
       return this.repo.find({ where: arg });
     } catch (error) {
       // TODO: Include the field you're fetching a user by in the error message i.e 'error while fetching user by x...'
-      throw new DatabaseException(`Database error while fetching users`, {
-        cause: error.message,
-        description: error.detail,
-      });
+      throw new DatabaseException(
+        `Failed to fetch users. Please try again later`,
+        {
+          cause: error.message,
+          description: error.detail,
+        },
+      );
     }
   }
 
@@ -56,10 +65,13 @@ export class UserRepository implements BaseRepository<UserEntity> {
       return this.repo.findOne({ where: arg });
     } catch (error) {
       // TODO: Include the field you're fetching a user by in the error message i.e 'error while fetching user by x...'
-      throw new DatabaseException(`Database error while fetching user`, {
-        cause: error.message,
-        description: error.detail,
-      });
+      throw new DatabaseException(
+        `Failed to fetch user. Please try again later`,
+        {
+          cause: error.message,
+          description: error.detail,
+        },
+      );
     }
   }
 
@@ -69,25 +81,37 @@ export class UserRepository implements BaseRepository<UserEntity> {
     try {
       return await this.repo.findOne({ select: options.fields });
     } catch (error) {
-      throw new DatabaseException('Database error while getting user', {
-        cause: error.message,
-        description: error.detail,
-      });
+      throw new DatabaseException(
+        'Failed to fetch user. Please try again later',
+        {
+          cause: error.message,
+          description: error.detail,
+        },
+      );
     }
   }
 
   async update(
     entityId: string,
     params: Partial<UserEntity>,
-  ): Promise<Partial<UserEntity>> {
+  ): Promise<UserEntity> {
     try {
-      await this.repo.update(entityId, params);
-      return this.repo.create(params);
+      const result = await this.repo
+        .createQueryBuilder()
+        .update(UserEntity)
+        .set(params)
+        .where('id = :id', { id: entityId })
+        .returning('*')
+        .execute();
+      return result.raw[0];
     } catch (error) {
-      throw new DatabaseException('Database error while updating user', {
-        cause: error.message,
-        description: error.detail,
-      });
+      throw new DatabaseException(
+        'Failed to update user. Please try again later',
+        {
+          cause: error.message,
+          description: error.detail,
+        },
+      );
     }
   }
 }

@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { Repository } from 'typeorm';
 
+// TODO: Refactor codeblock
 @Injectable()
 class ProvideRepositoryDependencies<T> {
   constructor(public typeOrmRepository: Repository<T>) {}

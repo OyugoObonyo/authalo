@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { BaseRepository } from '@common/interfaces/base-repository.interface';
 import { USER_REPOSITORY_TOKEN } from '@user/user.constants';
 import { User } from '@user/interfaces/user.interface';
@@ -12,6 +17,14 @@ export class UserService {
 
   async create(params: Partial<User>): Promise<User> {
     return this.userRepo.create(params);
+  }
+
+  async update(userId: string, params: Partial<User>): Promise<User> {
+    const updatedUser = this.userRepo.update(userId, params);
+    if (!updatedUser) {
+      throw new NotFoundException('User could not be found');
+    }
+    return updatedUser;
   }
 
   async get(): Promise<User[]> {

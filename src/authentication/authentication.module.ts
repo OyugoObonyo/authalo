@@ -1,7 +1,10 @@
 import { RefreshTokenEntity } from '@authentication/impl/entities/postgresql/refresh-token.entity';
 import { SessionEntity } from '@authentication/impl/entities/postgresql/session.entity';
 import { SessionRepository } from '@authentication/impl/repositories/postgresql/session.repository';
-import { SESSION_REPOSITORY_TOKEN } from '@authentication/impl/repositories/repository.tokens';
+import {
+  SESSION_REPOSITORY_TOKEN,
+  REFRESH_TOKEN_REPOSITORY_TOKEN,
+} from '@authentication/impl/repositories/repository.tokens';
 import { provideRepository } from '@common/providers';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -16,6 +19,7 @@ import { QUEUE_MANAGER_TOKEN } from '@queue/queue.constants';
 import { PgBossQueueManager } from '@queue/impl/managers/pgboss.manager';
 import { RegistryModule } from '@registry/registry.module';
 import { TokenService } from '@authentication/services/token.service';
+import { RefreshTokenRepository } from '@authentication/impl/repositories/postgresql/refresh-token.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([SessionEntity, RefreshTokenEntity]),
@@ -30,6 +34,11 @@ import { TokenService } from '@authentication/services/token.service';
       SessionEntity,
       SESSION_REPOSITORY_TOKEN,
       SessionRepository,
+    ),
+    ...provideRepository(
+      RefreshTokenEntity,
+      REFRESH_TOKEN_REPOSITORY_TOKEN,
+      RefreshTokenRepository,
     ),
     {
       provide: HASHING_SERVICE_TOKEN,

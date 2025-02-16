@@ -1,4 +1,4 @@
-import { RefreshToken } from '@authentication/interfaces/refresh-token.interface';
+import { RefreshToken } from '@authentication/interfaces/token.interfaces';
 import { UserEntity } from '@user/impl/entities/postgresql/user.entity';
 import { Timestamps } from 'database/embeds/timestamps.embed';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
@@ -11,6 +11,7 @@ export class RefreshTokenEntity implements RefreshToken {
   @Column({ name: 'is_revoked', default: false })
   isRevoked: boolean;
 
+  // TODO: Have this or verify with the iat field at the verify token level?
   @Column({ name: 'expires_at', type: 'timestamptz' })
   expiresAt: Date;
 
